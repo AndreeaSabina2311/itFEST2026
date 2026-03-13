@@ -1,12 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /* config options here */
   reactCompiler: true,
   experimental: {
     turbopackFileSystemCacheForDev: true,
-    turbo: {
-      root: process.cwd(), // Îi forțează pe Turbopack să folosească folderul principal (app0-artur-main)
-    }
   }
 };
 
