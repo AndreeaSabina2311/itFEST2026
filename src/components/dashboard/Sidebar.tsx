@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -27,6 +27,13 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isHovered, setIsHovered] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Verificăm dacă utilizatorul este ADMIN
+  useEffect(() => {
+    const adminAuth = localStorage.getItem('adminAuth');
+    setIsAdmin(!!adminAuth);
+  }, []);
   
   // Logica pentru DECONECTARE
   const handleLogout = async () => {
@@ -43,6 +50,11 @@ export default function Sidebar() {
   const handleSettings = () => {
     router.push('/dashboard/setari'); // Redirecționăm către noua pagină!
   };
+
+  // DACĂ EȘTI ADMIN SAU PE O RUTĂ DE ADMIN -> ASCUNDE COMPLET SIDEBAR-UL
+  if (isAdmin || pathname?.includes('/admin')) {
+    return null;
+  }
 
   return (
     <div className="w-64 h-screen bg-[#0a0a0a]/60 backdrop-blur-3xl border-r border-white/5 flex flex-col relative z-30 transition-all duration-300 shrink-0">

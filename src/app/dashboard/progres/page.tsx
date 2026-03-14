@@ -1,13 +1,8 @@
 "use client";
 
 import React from 'react';
-<<<<<<< HEAD
-import { motion } from 'framer-motion';
-import { TrendingUp, Trophy, Zap, Star, Droplets, Flame } from 'lucide-react';
-=======
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, Trophy, Zap, Star, Droplets, Flame, X, Calendar } from 'lucide-react';
->>>>>>> d351a2d (added Antrenaments)
 
 // Importăm contextul global pentru a accesa datele deja încărcate în memorie
 import { useDashboardContext } from '@/src/context/DashboardContext';
@@ -18,10 +13,6 @@ import { useDashboardContext } from '@/src/context/DashboardContext';
 export default function ProgresPage() {
   // Extragem progressStats direct din contextul gestionat în DashboardLayout
   const { progressStats } = useDashboardContext();
-<<<<<<< HEAD
-  
-  // Destructurăm datele de progres (vin instantaneu din memorie)
-=======
 
   // --- LOGICĂ MERGE DATE LOCALE (DEMO) ---
   // Combinăm datele din context cu cele salvate local în browser
@@ -91,18 +82,13 @@ export default function ProgresPage() {
   }, [progressStats]);
   
   // Folosim datele combinate (mergedStats) în loc de cele brute
->>>>>>> d351a2d (added Antrenaments)
   const { 
     loading, 
     streak, 
     weeklyBurned, 
     evolutionData, 
     badges 
-<<<<<<< HEAD
-  } = progressStats;
-=======
   } = mergedStats;
->>>>>>> d351a2d (added Antrenaments)
 
   // Configurare animații
   const containerVariants = { 
@@ -165,15 +151,11 @@ export default function ProgresPage() {
                </p>
             </motion.div>
 
-<<<<<<< HEAD
-            <motion.div variants={itemVariants} className="bg-white/5 border border-white/10 p-6 rounded-[32px] backdrop-blur-md flex items-center justify-between group hover:border-fuchsia-500/30 transition-all">
-=======
             <motion.div 
               variants={itemVariants} 
               onClick={() => setShowBurnedModal(true)}
               className="bg-white/5 border border-white/10 p-6 rounded-[32px] backdrop-blur-md flex items-center justify-between group hover:border-fuchsia-500/30 transition-all cursor-pointer hover:bg-white/10 relative"
             >
->>>>>>> d351a2d (added Antrenaments)
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Flame size={16} className="text-fuchsia-500" />
@@ -187,12 +169,9 @@ export default function ProgresPage() {
                 <div className="text-sm text-gray-400 mb-1">Obiectiv</div>
                 <span className="text-xl font-bold text-fuchsia-500">2000 <span className="text-sm">kcal</span></span>
               </div>
-<<<<<<< HEAD
-=======
               
               {/* Hint vizual că e clickabil */}
               <div className="absolute inset-0 rounded-[32px] ring-2 ring-fuchsia-500/0 group-hover:ring-fuchsia-500/20 transition-all" />
->>>>>>> d351a2d (added Antrenaments)
             </motion.div>
           </div>
 
@@ -272,8 +251,6 @@ export default function ProgresPage() {
           </div>
         </motion.div>
       </div>
-<<<<<<< HEAD
-=======
 
       {/* MODAL ISTORIC ARDERI */}
       <AnimatePresence>
@@ -318,7 +295,6 @@ export default function ProgresPage() {
           </motion.div>
         )}
       </AnimatePresence>
->>>>>>> d351a2d (added Antrenaments)
     </main>
   );
 }

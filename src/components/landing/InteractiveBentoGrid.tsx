@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence } from 'framer-motion';
 
@@ -21,11 +21,36 @@ export default function InteractiveBentoGrid() {
   const [mockWater, setMockWater] = useState(5);
   const mockStats = { totalCalories: 1850, mealsCount: 3, totalProteins: 145, burnedCalories: 420, isSavingWater: false };
 
-  const displayWater = userId ? dailyStats.waterGlasses : mockWater;
-  const displayCalories = userId ? dailyStats.totalCalories : mockStats.totalCalories;
-  const displayMealsCount = userId ? dailyStats.meals.length : mockStats.mealsCount;
-  const displayProteins = userId ? dailyStats.totalProteins : mockStats.totalProteins;
-  const displayBurnedCalories = userId ? dailyStats.burnedCalories : mockStats.burnedCalories;
+  // Read localStorage directly in render (no useState needed)
+  const getLocalStorageMeals = () => {
+    if (!userId || typeof window === 'undefined') return { meals: [], totalCals: 0, totalProts: 0 };
+    const today = new Date().toISOString().split('T')[0];
+    const localMealsKey = `meals_${userId}_${today}`;
+    const meals = JSON.parse(localStorage.getItem(localMealsKey) || '[]');
+    const totalCals = meals.reduce((sum: number, meal: any) => sum + (meal.calories || 0), 0);
+    const totalProts = meals.reduce((sum: number, meal: any) => sum + (meal.protein || 0), 0);
+    return { meals, totalCals, totalProts };
+  };
+
+  // Read exercises from localStorage
+  const getLocalStorageExercises = () => {
+    if (!userId || typeof window === 'undefined') return { exercises: [], totalBurned: 0 };
+    const today = new Date().toISOString().split('T')[0];
+    const localExercisesKey = `exercises_${userId}_${today}`;
+    const exercises = JSON.parse(localStorage.getItem(localExercisesKey) || '[]');
+    const totalBurned = exercises.reduce((sum: number, ex: any) => sum + (ex.calories_burned || 0), 0);
+    return { exercises, totalBurned };
+  };
+
+  const localData = getLocalStorageMeals();
+  const localExercises = getLocalStorageExercises();
+
+  // Prioritize localStorage if it has data, otherwise use dailyStats
+  const displayWater = userId && !dailyStats.loading ? dailyStats.waterGlasses : mockWater;
+  const displayCalories = localData.totalCals > 0 ? localData.totalCals : (userId && !dailyStats.loading ? dailyStats.totalCalories : mockStats.totalCalories);
+  const displayMealsCount = localData.meals.length > 0 ? localData.meals.length : (userId && !dailyStats.loading ? dailyStats.meals.length : mockStats.mealsCount);
+  const displayProteins = localData.totalProts > 0 ? localData.totalProts : (userId && !dailyStats.loading ? dailyStats.totalProteins : mockStats.totalProteins);
+  const displayBurnedCalories = localExercises.totalBurned > 0 ? localExercises.totalBurned : (userId && !dailyStats.loading ? dailyStats.burnedCalories : mockStats.burnedCalories);
   const displayIsSavingWater = userId ? dailyStats.isSavingWater : mockStats.isSavingWater;
 
   const [isCalorieModalOpen, setIsCalorieModalOpen] = useState(false);
