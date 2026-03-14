@@ -1,9 +1,15 @@
 "use client";
 
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDashboardContext } from '@/src/context/DashboardContext';
 import { Activity, BarChart3, TrendingUp, Zap, Cpu, Sparkles } from 'lucide-react';
+=======
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useDashboardContext } from '@/src/context/DashboardContext';
+>>>>>>> d351a2d (added Antrenaments)
 
 import DashboardHeader from '@/src/components/dashboard/DashboardHeader';
 import DashboardStatsGrid from '@/src/components/dashboard/DashboardStatsGrid';
@@ -11,6 +17,7 @@ import FitnessCalendar from '@/src/components/dashboard/FitnessCalendar';
 import MealsList from '@/src/components/dashboard/MealsList';
 import CalorieModal from '@/src/components/modals/CalorieModal';
 import WorkoutModal from '@/src/components/modals/WorkoutModal';
+<<<<<<< HEAD
 import WaterModal from '@/src/components/modals/WaterModal';
 
 // --- DATE MOCK PENTRU GRAFICE STATICE ---
@@ -40,6 +47,9 @@ const mockGraphData = {
 };
 
 type TimeRange = 'zile' | 'saptamani' | 'luni';
+=======
+import WaterModal from '@/src/components/modals/WaterModal'; // Importăm modalul
+>>>>>>> d351a2d (added Antrenaments)
 
 export default function Dashboard() {
   const { dailyStats } = useDashboardContext();
@@ -47,18 +57,33 @@ export default function Dashboard() {
 
   const [isCalorieModalOpen, setIsCalorieModalOpen] = useState(false);
   const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false); 
+<<<<<<< HEAD
   const [isWaterModalOpen, setIsWaterModalOpen] = useState(false);
   const [mealForm, setMealForm] = useState({ name: '', calories: '', protein: '' });
   
   const [timeRange, setTimeRange] = useState<TimeRange>('zile');
+=======
+  const [isWaterModalOpen, setIsWaterModalOpen] = useState(false); // State pentru apă
+
+  const [mealForm, setMealForm] = useState({ name: '', calories: '', protein: '' });
+>>>>>>> d351a2d (added Antrenaments)
 
   const handleAddMealSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!mealForm.name || !mealForm.calories) return;
+<<<<<<< HEAD
+=======
+
+>>>>>>> d351a2d (added Antrenaments)
     const success = await addMeal(mealForm.name, parseInt(mealForm.calories), parseInt(mealForm.protein) || 0);
     if (success) {
       setMealForm({ name: '', calories: '', protein: '' });
       setIsCalorieModalOpen(false); 
+<<<<<<< HEAD
+=======
+    } else {
+      alert("A apărut o eroare la salvarea mesei.");
+>>>>>>> d351a2d (added Antrenaments)
     }
   };
 
@@ -66,12 +91,17 @@ export default function Dashboard() {
   const itemVariants = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80 } } };
 
   return (
+<<<<<<< HEAD
     <main className="w-full flex-1 p-6 lg:p-12 relative z-10 overflow-hidden">
       {/* Ambient Glows de fundal pentru un efect mai dramatic */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
       <motion.div className="max-w-7xl mx-auto space-y-10" initial="hidden" animate="show" variants={containerVariants}>
+=======
+    <main className="w-full flex-1 p-6 lg:p-12 relative z-10">
+      <motion.div className="max-w-7xl mx-auto" initial="hidden" animate="show" variants={containerVariants}>
+>>>>>>> d351a2d (added Antrenaments)
         
         <motion.div variants={itemVariants}>
           <DashboardHeader />
@@ -80,6 +110,7 @@ export default function Dashboard() {
         <motion.div variants={itemVariants}>
           <DashboardStatsGrid 
              onOpenWorkout={() => setIsWorkoutModalOpen(true)} 
+<<<<<<< HEAD
              onOpenWater={() => setIsWaterModalOpen(true)}
           />
         </motion.div>
@@ -212,6 +243,12 @@ export default function Dashboard() {
         </div>
 
         {/* --- CALENDAR ȘI MESE --- */}
+=======
+             onOpenWater={() => setIsWaterModalOpen(true)} // Trimitem funcția!
+          />
+        </motion.div>
+
+>>>>>>> d351a2d (added Antrenaments)
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 min-h-[500px]">
           <motion.div variants={itemVariants} className="h-full">
             <FitnessCalendar />
@@ -227,7 +264,10 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
+<<<<<<< HEAD
       {/* --- MODALE --- */}
+=======
+>>>>>>> d351a2d (added Antrenaments)
       <AnimatePresence>
         {isCalorieModalOpen && (
           <CalorieModal isOpen={isCalorieModalOpen} onClose={() => setIsCalorieModalOpen(false)} meals={meals} newMealName={mealForm.name} setNewMealName={(val) => setMealForm(prev => ({...prev, name: val}))} newMealCalories={mealForm.calories} setNewMealCalories={(val) => setMealForm(prev => ({...prev, calories: val}))} newMealProtein={mealForm.protein} setNewMealProtein={(val) => setMealForm(prev => ({...prev, protein: val}))} isSavingMeal={isSavingMeal} handleAddMeal={handleAddMealSubmit} />
@@ -240,6 +280,10 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
+<<<<<<< HEAD
+=======
+      {/* Adăugăm Modalul de apă și aici */}
+>>>>>>> d351a2d (added Antrenaments)
       <AnimatePresence>
         {isWaterModalOpen && (
           <WaterModal 

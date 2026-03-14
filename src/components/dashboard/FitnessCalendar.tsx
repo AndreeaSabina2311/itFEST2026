@@ -44,6 +44,20 @@ export default function FitnessCalendar() {
       stats[m.date].protein += (m.protein || 0);
     });
 
+<<<<<<< HEAD
+=======
+    // --- INTEGRARE DATE LOCALE (DEMO) ---
+    // Citim și datele salvate local (pentru când baza de date nu merge)
+    const localExercises = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('demo_exercises') || '[]') : [];
+    localExercises.forEach((e: any) => {
+      // Verificăm dacă antrenamentul e din luna curentă
+      if (e.date >= startOfMonth && e.date <= endOfMonth) {
+        if (!stats[e.date]) stats[e.date] = { eaten: 0, burned: 0, protein: 0, water: 0 };
+        stats[e.date].burned += (e.calories_burned || 0);
+      }
+    });
+
+>>>>>>> d351a2d (added Antrenaments)
     exercises?.forEach(e => {
       if (!stats[e.date]) stats[e.date] = { eaten: 0, burned: 0, protein: 0, water: 0 };
       stats[e.date].burned += (e.calories_burned || 0);

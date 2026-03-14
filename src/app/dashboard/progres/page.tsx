@@ -1,8 +1,13 @@
 "use client";
 
 import React from 'react';
+<<<<<<< HEAD
 import { motion } from 'framer-motion';
 import { TrendingUp, Trophy, Zap, Star, Droplets, Flame } from 'lucide-react';
+=======
+import { motion, AnimatePresence } from 'framer-motion';
+import { TrendingUp, Trophy, Zap, Star, Droplets, Flame, X, Calendar } from 'lucide-react';
+>>>>>>> d351a2d (added Antrenaments)
 
 // Importăm contextul global pentru a accesa datele deja încărcate în memorie
 import { useDashboardContext } from '@/src/context/DashboardContext';
@@ -13,15 +18,91 @@ import { useDashboardContext } from '@/src/context/DashboardContext';
 export default function ProgresPage() {
   // Extragem progressStats direct din contextul gestionat în DashboardLayout
   const { progressStats } = useDashboardContext();
+<<<<<<< HEAD
   
   // Destructurăm datele de progres (vin instantaneu din memorie)
+=======
+
+  // --- LOGICĂ MERGE DATE LOCALE (DEMO) ---
+  // Combinăm datele din context cu cele salvate local în browser
+  const [mergedStats, setMergedStats] = React.useState(progressStats);
+  const [showBurnedModal, setShowBurnedModal] = React.useState(false);
+  const [recentHistory, setRecentHistory] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    // 1. Luăm datele din localStorage
+    const localExercises = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('demo_exercises') || '[]') : [];
+    
+    // Facem o copie a datelor din context
+    let newStats = JSON.parse(JSON.stringify(progressStats));
+
+    if (localExercises.length > 0) {
+      // 2. Calculăm totalul caloriilor arse local în ultima săptămână
+      let localWeeklyBurned = 0;
+      const today = new Date();
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(today.getDate() - 6); // Ultimele 7 zile
+      
+      const localMap: Record<string, number> = {};
+
+      localExercises.forEach((ex: any) => {
+        const exDate = new Date(ex.date);
+        // Verificăm dacă data e în intervalul relevant
+        if (exDate >= oneWeekAgo) {
+          localWeeklyBurned += (ex.calories_burned || 0);
+          localMap[ex.date] = (localMap[ex.date] || 0) + (ex.calories_burned || 0);
+        }
+      });
+
+      // Adăugăm la totalul săptămânal existent
+      newStats.weeklyBurned = (newStats.weeklyBurned || 0) + localWeeklyBurned;
+
+      // 3. Actualizăm graficul (Evolution Data)
+      if (!newStats.evolutionData || newStats.evolutionData.length === 0) {
+         newStats.evolutionData = Array(7).fill(0).map((_, i) => ({ valoare: 0, realCals: 0, zi: '' }));
+      }
+
+      newStats.evolutionData = newStats.evolutionData.map((item: any, index: number) => {
+        // Calculăm data corespunzătoare barei (index 6 = Azi, index 5 = Ieri...)
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - index));
+        const dateStr = d.toISOString().split('T')[0];
+        
+        const localVal = localMap[dateStr] || 0;
+        const totalVal = (item.realCals || 0) + localVal;
+        
+        return {
+          ...item,
+          realCals: totalVal,
+          // Recalculăm înălțimea barei (procent din targetul de 2500 kcal)
+          valoare: Math.min((totalVal / 2500) * 100, 100)
+        };
+      });
+
+      // 4. Pregătim lista pentru modal (istoric)
+      const history = localExercises
+        .filter((ex: any) => new Date(ex.date) >= oneWeekAgo)
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      setRecentHistory(history);
+    }
+
+    setMergedStats(newStats);
+  }, [progressStats]);
+  
+  // Folosim datele combinate (mergedStats) în loc de cele brute
+>>>>>>> d351a2d (added Antrenaments)
   const { 
     loading, 
     streak, 
     weeklyBurned, 
     evolutionData, 
     badges 
+<<<<<<< HEAD
   } = progressStats;
+=======
+  } = mergedStats;
+>>>>>>> d351a2d (added Antrenaments)
 
   // Configurare animații
   const containerVariants = { 
@@ -84,7 +165,15 @@ export default function ProgresPage() {
                </p>
             </motion.div>
 
+<<<<<<< HEAD
             <motion.div variants={itemVariants} className="bg-white/5 border border-white/10 p-6 rounded-[32px] backdrop-blur-md flex items-center justify-between group hover:border-fuchsia-500/30 transition-all">
+=======
+            <motion.div 
+              variants={itemVariants} 
+              onClick={() => setShowBurnedModal(true)}
+              className="bg-white/5 border border-white/10 p-6 rounded-[32px] backdrop-blur-md flex items-center justify-between group hover:border-fuchsia-500/30 transition-all cursor-pointer hover:bg-white/10 relative"
+            >
+>>>>>>> d351a2d (added Antrenaments)
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Flame size={16} className="text-fuchsia-500" />
@@ -98,6 +187,12 @@ export default function ProgresPage() {
                 <div className="text-sm text-gray-400 mb-1">Obiectiv</div>
                 <span className="text-xl font-bold text-fuchsia-500">2000 <span className="text-sm">kcal</span></span>
               </div>
+<<<<<<< HEAD
+=======
+              
+              {/* Hint vizual că e clickabil */}
+              <div className="absolute inset-0 rounded-[32px] ring-2 ring-fuchsia-500/0 group-hover:ring-fuchsia-500/20 transition-all" />
+>>>>>>> d351a2d (added Antrenaments)
             </motion.div>
           </div>
 
@@ -177,6 +272,53 @@ export default function ProgresPage() {
           </div>
         </motion.div>
       </div>
+<<<<<<< HEAD
+=======
+
+      {/* MODAL ISTORIC ARDERI */}
+      <AnimatePresence>
+        {showBurnedModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowBurnedModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-[#0a0a0a] w-full max-w-md rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Flame className="text-fuchsia-500" /> Istoric Arderi
+                </h3>
+                <button onClick={() => setShowBurnedModal(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-3">
+                {recentHistory.length > 0 ? recentHistory.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-fuchsia-500/30 transition-colors">
+                    <div>
+                      <p className="font-bold text-white">{item.name}</p>
+                      <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <Calendar size={10} /> {item.date}
+                      </p>
+                    </div>
+                    <span className="text-fuchsia-500 font-bold">-{item.calories_burned} kcal</span>
+                  </div>
+                )) : (
+                  <div className="text-center text-gray-500 py-8">
+                    Nu ai activitate înregistrată în ultima săptămână.
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+>>>>>>> d351a2d (added Antrenaments)
     </main>
   );
 }
