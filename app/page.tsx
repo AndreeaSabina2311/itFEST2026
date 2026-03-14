@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { useRouter } from 'next/navigation'; // Adăugat pentru redirecționare
 import { useAuth } from '@/lib/useAuth';
-=======
-import { useAuth } from '@/lib/useAuth';
-// Importăm contextul global în loc de hook-ul local
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
 import { useDashboardContext } from '@/lib/context/DashboardContext'; 
 import { AnimatePresence } from 'framer-motion';
 
@@ -27,31 +21,31 @@ import ContactSection from '@/app/components/landing/ContactSection';
 import CalorieModal from '@/app/components/modals/CalorieModal';
 import ProteinModal from '@/app/components/modals/ProteinModal';
 import WaterModal from '@/app/components/modals/WaterModal';
+import WorkoutModal from '@/app/components/modals/WorkoutModal'; // NOU: Importăm modalul pentru antrenamente
 
 export default function PremiumNutritionApp() {
   const { userId } = useAuth();
-<<<<<<< HEAD
-  const router = useRouter(); // Inițializăm router-ul
   
   // 1. UTILIZĂM DATELE DIN CONTEXTUL GLOBAL
   const { dailyStats } = useDashboardContext();
   const { 
-    meals, waterGlasses, totalCalories, totalProteins, 
-    burnedCalories, // NOU: Extragem caloriile arse
-=======
-  
-  // 1. UTILIZĂM DATELE DIN CONTEXTUL GLOBAL (Fără lag la navigare)
-  const { dailyStats } = useDashboardContext();
-  const { 
-    meals, waterGlasses, totalCalories, totalProteins, 
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
-    isSavingMeal, isSavingWater, addMeal, drinkWater 
+    meals, 
+    exercises, // NOU: Extragem lista de exerciții
+    waterGlasses, 
+    totalCalories, 
+    totalProteins, 
+    burnedCalories, 
+    isSavingMeal, 
+    isSavingWater, 
+    addMeal, 
+    drinkWater 
   } = dailyStats;
 
   // 2. STĂRI DOAR PENTRU UI
   const [isCalorieModalOpen, setIsCalorieModalOpen] = useState(false);
   const [isProteinModalOpen, setIsProteinModalOpen] = useState(false);
   const [isWaterModalOpen, setIsWaterModalOpen] = useState(false);
+  const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false); // NOU: Stare pentru modalul de antrenamente
 
   const [newMealName, setNewMealName] = useState('');
   const [newMealCalories, setNewMealCalories] = useState('');
@@ -78,15 +72,12 @@ export default function PremiumNutritionApp() {
     if (userId) await drinkWater();
   };
 
-<<<<<<< HEAD
-  // NOU: Ce se întâmplă când dă click pe cardul de Calorii Arse
+  // NOU: Acum deschide modalul de antrenamente
   const handleWorkoutClick = () => {
-    if (userId) router.push('/dashboard/antrenamente');
+    if (userId) setIsWorkoutModalOpen(true);
     else alert("Pika! ⚡ Loghează-te pentru a-ți vedea antrenamentele!");
   };
 
-=======
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   const handleAddMealSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || !newMealName || !newMealCalories) return;
@@ -111,45 +102,38 @@ export default function PremiumNutritionApp() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* FUNDAL 3D STELE */}
-      <StarsCanvas />
-
-      {/* NAVBAR */}
-      <Navbar />
-
-      {/* HERO SECTION & BENTO GRID */}
-      <div className="max-w-7xl mx-auto px-6 pt-40 pb-20 grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-8 items-center min-h-screen">
-        <HeroSection />
-
-        <StatsBentoGrid
-          totalCalories={totalCalories}
-          mealsCount={meals.length}
-          totalProteins={totalProteins}
-          currentWater={waterGlasses}
-          isSavingWater={isSavingWater}
-<<<<<<< HEAD
-          burnedCalories={burnedCalories || 0} // Trimitem valoarea către grid
-=======
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
-          handleCalorieClick={handleCalorieClick}
-          handleProteinClick={handleProteinClick}
-          handleWaterClick={handleWaterClick}
-          handleDrinkWater={handleDrinkWaterClick}
-<<<<<<< HEAD
-          handleWorkoutClick={handleWorkoutClick} // Trimitem funcția de click
-        />
-      </div>
-      
-      <RotatingTickets />
-      <TestimonialsSection />
-=======
-        />
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <StarsCanvas />
       </div>
 
-      <TestimonialsSection />
-      <RotatingTickets />
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
-      <SponsorsSection />
-      <ContactSection />
+      <div className="relative z-10">
+        {/* NAVBAR */}
+        <Navbar />
+
+        {/* HERO SECTION & BENTO GRID */}
+        <div className="max-w-7xl mx-auto px-6 pt-40 pb-20 grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-8 items-center min-h-screen">
+          <HeroSection />
+
+          <StatsBentoGrid
+            totalCalories={totalCalories}
+            mealsCount={meals.length}
+            totalProteins={totalProteins}
+            currentWater={waterGlasses}
+            isSavingWater={isSavingWater}
+            burnedCalories={burnedCalories || 0}
+            handleCalorieClick={handleCalorieClick}
+            handleProteinClick={handleProteinClick}
+            handleWaterClick={handleWaterClick}
+            handleDrinkWater={handleDrinkWaterClick}
+            handleWorkoutClick={handleWorkoutClick}
+          />
+        </div>
+        
+        <RotatingTickets />
+        <TestimonialsSection />
+        <SponsorsSection />
+        <ContactSection />
+      </div>
 
       {/* --- MODALE --- */}
       <AnimatePresence>
@@ -187,6 +171,18 @@ export default function PremiumNutritionApp() {
             isOpen={isWaterModalOpen} 
             onClose={() => setIsWaterModalOpen(false)} 
             currentWater={waterGlasses} 
+          />
+        )}
+      </AnimatePresence>
+
+      {/* NOU: Modalul pentru antrenamente */}
+      <AnimatePresence>
+        {isWorkoutModalOpen && (
+          <WorkoutModal 
+            isOpen={isWorkoutModalOpen} 
+            onClose={() => setIsWorkoutModalOpen(false)} 
+            burnedCalories={burnedCalories || 0}
+            exercises={exercises}
           />
         )}
       </AnimatePresence>

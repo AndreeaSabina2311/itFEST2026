@@ -1,18 +1,11 @@
 "use client";
 
 import React from 'react';
-<<<<<<< HEAD
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Flame, Brain, TrendingUp, Apple } from 'lucide-react';
 
 // Datele pentru cele 4 bilete rotitoare, acum toate direcționează către pagini
-=======
-import { motion } from 'framer-motion';
-import { Flame, Brain, TrendingUp, Apple } from 'lucide-react';
-
-// Datele pentru cele 4 bilete rotitoare
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
 const bilete = [
   {
     id: 1,
@@ -20,14 +13,10 @@ const bilete = [
     descriere: "Rutine generate inteligent și adaptate la corpul tău.",
     icon: Flame,
     color: "from-orange-500 to-red-600",
-<<<<<<< HEAD
     shadow: "shadow-orange-500/40",
     actionType: "link",
     href: "/dashboard/antrenamente",
     quote: "Singurul antrenament prost este cel pe care nu l-ai făcut."
-=======
-    shadow: "shadow-orange-500/40"
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   },
   {
     id: 2,
@@ -35,14 +24,10 @@ const bilete = [
     descriere: "Calcul precis la gram pentru macros și calorii zilnice.",
     icon: Apple,
     color: "from-fuchsia-500 to-purple-600",
-<<<<<<< HEAD
     shadow: "shadow-fuchsia-500/40",
     actionType: "link",
     href: "/dashboard/nutritie",
     quote: "Corpul tău este singurul loc în care vei trăi. Ai grijă de el."
-=======
-    shadow: "shadow-fuchsia-500/40"
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   },
   {
     id: 3,
@@ -50,14 +35,10 @@ const bilete = [
     descriere: "Grafice detaliate și tracking pe termen lung.",
     icon: TrendingUp,
     color: "from-blue-500 to-cyan-600",
-<<<<<<< HEAD
     shadow: "shadow-cyan-500/40",
     actionType: "link",
     href: "/dashboard/progres",
     quote: "Progresul zilnic mic duce la rezultate masive."
-=======
-    shadow: "shadow-cyan-500/40"
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   },
   {
     id: 4,
@@ -65,19 +46,14 @@ const bilete = [
     descriere: "Asistentul tău personal disponibil 24/7.",
     icon: Brain,
     color: "from-emerald-500 to-teal-600",
-<<<<<<< HEAD
     shadow: "shadow-emerald-500/40",
     actionType: "link", // L-am transformat în link
     href: "/dashboard", // Te va duce pe Dashboard
     quote: "Fiecare campion a avut pe cineva în colțul lui. Noi suntem aici."
-=======
-    shadow: "shadow-emerald-500/40"
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   }
 ];
 
 export default function RotatingTickets() {
-<<<<<<< HEAD
   const router = useRouter();
 
   // Funcția care decide ce se întâmplă la click
@@ -87,8 +63,6 @@ export default function RotatingTickets() {
     }
   };
 
-=======
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   return (
     <section className="py-24 relative z-10">
       <div className="max-w-7xl mx-auto px-6">
@@ -108,19 +82,10 @@ export default function RotatingTickets() {
             <div key={bilet.id} className="relative h-[320px] w-full group">
               
               <motion.div
-<<<<<<< HEAD
                 onClick={() => handleTicketAction(bilet)}
                 className="w-full h-full relative cursor-pointer"
                 initial={{ rotateY: 0 }}
                 whileHover={{ rotateY: 180, scale: 1.05 }}
-=======
-                className="w-full h-full relative cursor-pointer"
-                // Starea inițială (fața biletului)
-                initial={{ rotateY: 0 }}
-                // Se întoarce la 180 de grade (spatele biletului) DOAR când pui mouse-ul pe el
-                whileHover={{ rotateY: 180 }}
-                // O tranziție fluidă, de tip "arc" (spring) pentru un efect premium
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
                 transition={{ 
                   duration: 0.6, 
                   type: "spring", 
@@ -142,7 +107,6 @@ export default function RotatingTickets() {
 
                 {/* --- SPATELE BILETULUI --- */}
                 <div 
-<<<<<<< HEAD
                   className="absolute inset-0 rounded-3xl bg-[#0a0a0a] border border-fuchsia-500/30 flex flex-col items-center justify-center text-center shadow-xl overflow-hidden px-4"
                   style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
@@ -164,20 +128,6 @@ export default function RotatingTickets() {
                     <span className="text-fuchsia-400 text-xs font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/10 animate-pulse mt-2">
                       Apasă pentru acces
                     </span>
-=======
-                  className="absolute inset-0 rounded-3xl bg-[#0a0a0a] border border-fuchsia-500/30 flex flex-col items-center justify-center text-center shadow-xl overflow-hidden"
-                  style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-                >
-                  {/* Efect de lumină difuză pe spatele cardului */}
-                  <div className="absolute inset-0 bg-fuchsia-600/10 blur-2xl rounded-full scale-150"></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center">
-                    <span className="text-4xl font-black italic text-fuchsia-500 tracking-tighter drop-shadow-[0_0_15px_rgba(217,70,239,0.5)]">
-                      Q&K
-                    </span>
-                    <div className="w-12 h-px bg-white/20 my-3"></div>
-                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Premium Pass</p>
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
                   </div>
                 </div>
 

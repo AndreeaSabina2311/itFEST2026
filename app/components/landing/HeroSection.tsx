@@ -6,19 +6,11 @@ import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 
 export default function HeroSection() {
-<<<<<<< HEAD
-=======
-  // Am adus animațiile aici pentru ca această componentă să fie 100% independentă
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
   const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } } };
   const itemVariants = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 70, damping: 15 } } };
 
   return (
-<<<<<<< HEAD
     <motion.div className="xl:col-span-5 flex flex-col justify-center text-left relative z-10" initial="hidden" animate="show" variants={containerVariants}>
-=======
-    <motion.div className="xl:col-span-5 flex flex-col justify-center text-left" initial="hidden" animate="show" variants={containerVariants}>
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
       
       <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 w-fit mb-8 backdrop-blur-sm">
         <span className="flex h-2 w-2 rounded-full bg-fuchsia-600 animate-pulse"></span>
@@ -36,7 +28,6 @@ export default function HeroSection() {
         Algoritmi AI care îți mapează metabolismul. Nutriție calculată la gram. Rezultate imposibil de ignorat.
       </motion.p>
 
-<<<<<<< HEAD
       {/* Container pentru butoane, setat cu z-20 pentru a putea fi apăsate peste fundalul 3D */}
       <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 relative z-20">
         
@@ -54,16 +45,6 @@ export default function HeroSection() {
           Explorează Aplicația
         </Link>
         
-=======
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4">
-        <Link href="/dashboard" className="flex items-center justify-center gap-2 px-8 py-4 bg-fuchsia-600 text-white font-bold rounded-2xl hover:bg-fuchsia-500 hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_rgba(217,70,239,0.3)]">
-          Generează Planul
-          <ChevronRight size={20} />
-        </Link>
-        <button className="flex items-center justify-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white font-bold rounded-2xl hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
-          Explorează Aplicația
-        </button>
->>>>>>> 8bebb57754bc1f54798aadde33c225e9d7aa5034
       </motion.div>
 
     </motion.div>
