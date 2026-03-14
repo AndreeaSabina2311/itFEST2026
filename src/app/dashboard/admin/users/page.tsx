@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Trash2, Search, User, Mail, Calendar, Loader2, AlertTriangle, LogOut } from 'lucide-react';
+import { ShieldAlert, Trash2, Search, User, Calendar, Loader2, AlertTriangle, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface UserData {

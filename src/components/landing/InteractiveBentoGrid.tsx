@@ -10,7 +10,7 @@ import StatsBentoGrid from './StatsBentoGrid';
 
 import CalorieModal from '@/src/components/modals/CalorieModal';
 import WorkoutModal from '@/src/components/modals/WorkoutModal';
-import WaterModal from '@/src/components/modals/WaterModal'; // Importăm noul modal
+import WaterModal from '@/src/components/modals/WaterModal';
 
 export default function InteractiveBentoGrid() {
   const { userId } = useAuth();
@@ -18,8 +18,9 @@ export default function InteractiveBentoGrid() {
 
   const dailyStats = useDailyStats(userId);
 
-  const [mockWater, setMockWater] = useState(5);
-  const mockStats = { totalCalories: 1850, mealsCount: 3, totalProteins: 145, burnedCalories: 420, isSavingWater: false };
+  // Setăm valorile la 0 pentru vizitatorii neautentificați
+  const [mockWater, setMockWater] = useState(0);
+  const mockStats = { totalCalories: 0, mealsCount: 0, totalProteins: 0, burnedCalories: 0, isSavingWater: false };
 
   // Read localStorage directly in render (no useState needed)
   const getLocalStorageMeals = () => {
@@ -55,41 +56,39 @@ export default function InteractiveBentoGrid() {
 
   const [isCalorieModalOpen, setIsCalorieModalOpen] = useState(false);
   const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false);
-  const [isWaterModalOpen, setIsWaterModalOpen] = useState(false); // State pentru modalul de apă
+  const [isWaterModalOpen, setIsWaterModalOpen] = useState(false); 
   
   const [mealForm, setMealForm] = useState({ name: '', calories: '', protein: '' });
 
+  // Redirecționăm către /auth dacă utilizatorul nu este logat
   const handleCalorieClick = () => {
     if (userId) setIsCalorieModalOpen(true);
-    else alert("Pika! ⚡ Loghează-te pentru a-ți adăuga mesele!");
+    else router.push('/auth');
   };
 
   const handleProteinClick = () => {
     if (userId) setIsCalorieModalOpen(true); 
-    else alert("Pika! ⚡ Loghează-te pentru a vedea aportul proteic!");
+    else router.push('/auth');
   };
 
   const handleWaterClick = () => {
-    if (userId) setIsWaterModalOpen(true); // Deschide modalul în loc să ruteze
-    else alert("Pika-pi! 💧 Loghează-te pentru a salva hidratarea!");
+    if (userId) setIsWaterModalOpen(true); 
+    else router.push('/auth');
   };
 
   const handleWorkoutClick = () => {
     if (userId) setIsWorkoutModalOpen(true);
-    else alert("Pika! ⚡ Loghează-te pentru a-ți vedea antrenamentele!");
+    else router.push('/auth');
   };
 
-  // Această funcție o pasăm modalului de apă
   const handleDrinkWaterSubmit = async () => {
     if (userId) {
       await dailyStats.drinkWater();
     } else {
-      if (mockWater < 8) setMockWater(prev => prev + 1);
-      else alert("Pika-pi! 💧 Ai atins limita de test! Loghează-te pentru a salva pe bune!");
+      router.push('/auth');
     }
   };
 
-  // Click-ul direct pe butonul mic de pe card (dacă îl mai ai)
   const handleDrinkWaterDirectly = async (e: React.MouseEvent) => {
     e.stopPropagation();
     handleDrinkWaterSubmit();
@@ -136,7 +135,6 @@ export default function InteractiveBentoGrid() {
         )}
       </AnimatePresence>
 
-      {/* MODALUL DE APĂ */}
       <AnimatePresence>
         {isWaterModalOpen && (
           <WaterModal 

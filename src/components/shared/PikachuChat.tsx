@@ -52,7 +52,8 @@ export default function PikachuChat() {
   };
 
   return (
-    <div className="fixed bottom-20 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-20 right-6 z-[9999] transform-gpu will-change-transform flex flex-col items-end">
+      {/* AICI SUNT MODIFICĂRILE PENTRU FLUIDITATE ȘI VIZIBILITATE */}
       
       {/* Fereastra de Chat */}
       <AnimatePresence>

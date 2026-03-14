@@ -15,9 +15,10 @@ export default function SettingsPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState(''); // Email-ul de obicei e read-only, dar îl afișăm
   
-  // Setări extra (pentru care ar trebui să ai un tabel "profiles" în Supabase)
+  // Setări extra
   const [calorieGoal, setCalorieGoal] = useState('2500');
   const [waterGoal, setWaterGoal] = useState('8');
+  const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState('3');
   const [weight, setWeight] = useState('');
 
   useEffect(() => {
@@ -28,22 +29,17 @@ export default function SettingsPage() {
     try {
       setLoading(true);
       // Preluăm datele de bază din contul utilizatorului
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      const { data: { session }, error: userError } = await supabase.auth.getSession();
       if (userError) throw userError;
 
+      const user = session?.user;
       if (user) {
         setEmail(user.email || '');
         setName(user.user_metadata?.full_name || '');
-        
-        // Dacă ai creat un tabel 'profiles' pentru celelalte setări, aici le preluăm:
-        /*
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-        if (profile) {
-           setCalorieGoal(profile.calorie_goal || '2500');
-           setWaterGoal(profile.water_goal || '8');
-           setWeight(profile.weight || '');
-        }
-        */
+        setCalorieGoal(user.user_metadata?.calorie_goal || '2500');
+        setWaterGoal(user.user_metadata?.water_goal || '8');
+        setWeeklyWorkoutGoal(user.user_metadata?.weekly_workout_goal || '3');
+        setWeight(user.user_metadata?.weight || '');
       }
     } catch (error) {
       console.error('Eroare la preluarea datelor:', error);
@@ -59,25 +55,22 @@ export default function SettingsPage() {
     setSuccessMsg('');
 
     try {
-      // 1. Salvăm Numele în metadata din Supabase Auth
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Trebuie să fii autentificat pentru a salva modificările.");
+      }
+
+      // 1. Salvăm setările în metadata din Supabase Auth
       const { error: authError } = await supabase.auth.updateUser({
-        data: { full_name: name }
+        data: { 
+          full_name: name,
+          calorie_goal: calorieGoal,
+          water_goal: waterGoal,
+          weekly_workout_goal: weeklyWorkoutGoal,
+          weight: weight
+        }
       });
       if (authError) throw authError;
-
-      // 2. Salvăm restul setărilor în tabelul "profiles" (opțional, dacă l-ai creat)
-      /*
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { error: profileError } = await supabase.from('profiles').upsert({
-          id: user.id,
-          calorie_goal: parseInt(calorieGoal),
-          water_goal: parseInt(waterGoal),
-          weight: parseFloat(weight)
-        });
-        if (profileError) throw profileError;
-      }
-      */
 
       setSuccessMsg("Setările au fost salvate cu succes! ⚡");
       
@@ -187,6 +180,17 @@ export default function SettingsPage() {
                   onChange={(e) => setWaterGoal(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white text-center focus:outline-none focus:border-cyan-500/50 transition-all font-bold text-lg"
                   placeholder="8"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold tracking-widest uppercase text-gray-500 ml-1">Antrenamente / Săptămână</label>
+                <input
+                  type="number"
+                  value={weeklyWorkoutGoal}
+                  onChange={(e) => setWeeklyWorkoutGoal(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 px-4 text-white text-center focus:outline-none focus:border-fuchsia-500/50 transition-all font-bold text-lg"
+                  placeholder="3"
                 />
               </div>
 

@@ -10,16 +10,23 @@ import {
   useTexture,
 } from "@react-three/drei";
 
-const Ball = (props: { imgUrl: string }) => {
-  const [decal] = useTexture([props.imgUrl]);
+const Ball = (props: { icons: string[] }) => {
+  // useTexture poate primi un array de URL-uri și va returna un array cu texturile încărcate
+  const textures = useTexture(props.icons);
+
+  // Definim pozițiile și rotațiile pentru a așeza cele 4 logouri în jurul bilei
+  const decalSettings = [
+    { position: [0, 0, 1], rotation: [0, 0, 0] },               // Față
+    { position: [0, 0, -1], rotation: [0, Math.PI, 0] },        // Spate
+    { position: [1, 0, 0], rotation: [0, Math.PI / 2, 0] },     // Dreapta
+    { position: [-1, 0, 0], rotation: [0, -Math.PI / 2, 0] },   // Stânga
+  ];
 
   return (
-    // Am redus `floatIntensity` la 0.1 (va pluti foarte, foarte fin, doar cât să aibă viață, fără să iasă din cutie)
     <Float speed={1.75} rotationIntensity={1} floatIntensity={0.1}>
       <ambientLight intensity={0.6} />
       <directionalLight intensity={0.8} position={[2, 2, 5]} />
       
-      {/* Am redus scala 3D la 1.75 pentru a lăsa suficient loc "de respirat" în jurul bilei */}
       <mesh castShadow receiveShadow scale={1.75}>
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
@@ -29,20 +36,32 @@ const Ball = (props: { imgUrl: string }) => {
           flatShading
           roughness={0.3}
         />
-        {/* Am mărit puțin logoul (scale={1.2}) ca să rămână extrem de vizibil */}
-        <Decal
-          position={[0, 0, 1]}
-          rotation={[2 * Math.PI, 0, 6.25]}
-          scale={1.2}
-          map={decal}
-          flatShading
-        />
+        
+        {/* Mapăm texturile pe cele 4 fețe ale sferei */}
+        {textures.map((texture, index) => {
+          // Ne asigurăm că randăm maxim 4 decals pentru setările pe care le avem
+          if (index >= 4) return null; 
+          
+          const { position, rotation } = decalSettings[index];
+          
+          return (
+            <Decal
+              key={`decal-${index}`}
+              position={position as [number, number, number]}
+              rotation={rotation as [number, number, number]}
+              scale={1.2}
+              map={texture}
+              flatShading
+            />
+          );
+        })}
       </mesh>
     </Float>
   );
 };
 
-const BallCanvas = ({ icon }: { icon: string }) => {
+// Modificăm componenta pentru a accepta prop-ul 'icons' ca array de string-uri
+const BallCanvas = ({ icons }: { icons: string[] }) => {
   return (
     <Canvas
       frameloop='always'
@@ -51,8 +70,14 @@ const BallCanvas = ({ icon }: { icon: string }) => {
       camera={{ position: [0, 0, 5], fov: 45 }}
     >
       <Suspense fallback={null}>
-        <OrbitControls enableZoom={false} enablePan={false} />
-        <Ball imgUrl={icon} />
+        {/* Am adăugat autoRotate și autoRotateSpeed pentru ca bilele să se învârtă singure vizualizând toți sponsorii */}
+        <OrbitControls 
+          enableZoom={false} 
+          enablePan={false} 
+          autoRotate 
+          autoRotateSpeed={2} 
+        />
+        <Ball icons={icons} />
       </Suspense>
       <Preload all />
     </Canvas>

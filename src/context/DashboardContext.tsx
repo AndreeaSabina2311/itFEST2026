@@ -11,9 +11,9 @@ const DashboardContext = createContext<any>(null);
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const { userId } = useAuth();
   
-  // Apelăm hook-urile o singură dată aici, la nivelul superior!
-  const dailyStats = useDailyStats(userId);
+  // Avem nevoie ca useDailyStats să triggereze un refresh și în Progres când are loc o adăugare de antrenament
   const progressStats = useProgressStats(userId);
+  const dailyStats = useDailyStats(userId, progressStats?.refreshData);
 
   return (
     <DashboardContext.Provider value={{ dailyStats, progressStats }}>

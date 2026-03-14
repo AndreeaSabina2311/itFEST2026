@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Flame, Brain, TrendingUp, Apple } from 'lucide-react';
+import { useAuth } from '@/src/hooks/useAuth'; // Am adăugat importul pentru autentificare
 
 const bilete = [
   {
@@ -54,10 +55,17 @@ const bilete = [
 
 export default function RotatingTickets() {
   const router = useRouter();
+  const { userId } = useAuth(); // Extragem starea utilizatorului
 
   const handleTicketAction = (bilet: any) => {
     if (bilet.actionType === 'link') {
-      router.push(bilet.href);
+      if (userId) {
+        // Dacă utilizatorul este logat, îl trimitem la destinația cardului
+        router.push(bilet.href);
+      } else {
+        // Dacă NU este logat, îl trimitem la pagina de autentificare
+        router.push('/auth');
+      }
     }
   };
 
@@ -140,7 +148,7 @@ export default function RotatingTickets() {
                     
                     {/* Indicație de click */}
                     <span className="text-fuchsia-400 text-xs font-semibold bg-white/5 px-3 py-1 rounded-full border border-white/10 animate-pulse mt-2">
-                      Apasă pentru acces
+                      {userId ? "Apasă pentru acces" : "Apasă pentru autentificare"}
                     </span>
                   </div>
                 </div>

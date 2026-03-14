@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { Meal } from '@/src/types';
 
-export function useDailyStats(userId: string | null | undefined) {
+export function useDailyStats(userId: string | null | undefined, refreshProgress?: () => void) {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [exercises, setExercises] = useState<any[]>([]);
   const [waterGlasses, setWaterGlasses] = useState(0);
   const [todayWorkout, setTodayWorkout] = useState("Fără antrenament");
-  const [burnedCalories, setBurnedCalories] = useState(0); 
+  const [burnedCalories, setBurnedCalories] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isSavingMeal, setIsSavingMeal] = useState(false);
   const [isSavingWater, setIsSavingWater] = useState(false);
@@ -21,7 +21,7 @@ export function useDailyStats(userId: string | null | undefined) {
     const today = new Date().toISOString().split('T')[0];
 
     try {
-      const [ waterRes, mealsRes, exercisesRes ] = await Promise.all([
+      const [waterRes, mealsRes, exercisesRes] = await Promise.all([
         supabase.from('daily_stats').select('water_glasses').eq('user_id', userId).eq('date', today).maybeSingle(),
         supabase.from('meals').select('*').eq('user_id', userId).eq('date', today).order('created_at', { ascending: true }),
         supabase.from('exercises').select('id, name, calories_burned').eq('user_id', userId).eq('date', today)
@@ -209,6 +209,7 @@ export function useDailyStats(userId: string | null | undefined) {
         else setTodayWorkout("Fără antrenament");
         return newExercises;
       });
+      if (refreshProgress) refreshProgress();
       return true;
     } catch (error) {
       return false;
@@ -269,6 +270,7 @@ export function useDailyStats(userId: string | null | undefined) {
         if (updated.length > 0) setTodayWorkout(updated[0].name);
         return updated;
       });
+      if (refreshProgress) refreshProgress();
       return true;
     } catch (error) {
       return false;
@@ -302,6 +304,7 @@ export function useDailyStats(userId: string | null | undefined) {
         if (updated.length > 0) setTodayWorkout(updated[0].name);
         return updated;
       });
+      if (refreshProgress) refreshProgress();
       return true;
     } catch (error) {
       console.error("Eroare la addExercise:", error);

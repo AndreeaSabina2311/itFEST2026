@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/src/lib/supabase';
 import { useAuth } from '@/src/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Flame, Utensils, Droplets, Activity, X } from 'lucide-react';
+// AM ADĂUGAT CheckCircle și Award din lucide-react
+import { ChevronLeft, ChevronRight, Flame, Utensils, Droplets, Activity, X, CheckCircle, Award, Loader2 } from 'lucide-react';
 
 type DayStats = {
   eaten: number;
@@ -13,6 +14,12 @@ type DayStats = {
   water: number;
 };
 
+interface LocalExercise {
+  user_id: string;
+  date: string;
+  calories_burned: number;
+}
+
 export default function FitnessCalendar() {
   const { userId } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -20,12 +27,7 @@ export default function FitnessCalendar() {
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<{ date: string; stats: DayStats } | null>(null);
 
-  useEffect(() => {
-    if (!userId) return;
-    fetchMonthData();
-  }, [userId, currentDate]);
-
-  const fetchMonthData = async () => {
+  const fetchMonthData = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     
@@ -44,11 +46,8 @@ export default function FitnessCalendar() {
       stats[m.date].protein += (m.protein || 0);
     });
 
-    // --- INTEGRARE DATE LOCALE (DEMO) ---
-    // Citim și datele salvate local (pentru când baza de date nu merge)
     const localExercises = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('demo_exercises') || '[]') : [];
-    localExercises.forEach((e: any) => {
-      // Verificăm dacă antrenamentul e din luna curentă ȘI aparține utilizatorului logat
+    localExercises.forEach((e: LocalExercise) => {
       if (e.user_id === userId && e.date >= startOfMonth && e.date <= endOfMonth) {
         if (!stats[e.date]) stats[e.date] = { eaten: 0, burned: 0, protein: 0, water: 0 };
         stats[e.date].burned += (e.calories_burned || 0);
@@ -67,15 +66,22 @@ export default function FitnessCalendar() {
 
     setDailyData(stats);
     setLoading(false);
-  };
+  }, [userId, currentDate]);
+
+  useEffect(() => {
+    fetchMonthData();
+  }, [fetchMonthData]);
 
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-[32px] p-6 backdrop-blur-md relative">
+    <div className="bg-white/5 border border-white/10 rounded-[32px] p-6 backdrop-blur-md relative h-full flex flex-col">
       <div className="flex justify-between items-center mb-8">
-        <h3 className="text-xl font-bold italic">Calendar Activitate</h3>
+        <div className="flex items-center gap-3">
+          <h3 className="text-xl font-bold italic">Calendar Activitate</h3>
+          {loading && <Loader2 className="animate-spin text-fuchsia-500" size={16} />}
+        </div>
         <div className="flex gap-2">
           <button onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))} className="p-2 hover:bg-white/10 rounded-xl transition-colors"><ChevronLeft size={20}/></button>
           <span className="font-bold min-w-[120px] text-center capitalize">
@@ -85,7 +91,7 @@ export default function FitnessCalendar() {
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 flex-1">
         {['Dum', 'Lun', 'Mar', 'Mie', 'Joi', 'Vin', 'Sâm'].map(d => (
           <div key={d} className="text-center text-[10px] font-black text-gray-500 uppercase mb-2">{d}</div>
         ))}
@@ -97,6 +103,9 @@ export default function FitnessCalendar() {
           const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
           const data = dailyData[dateStr] || { eaten: 0, burned: 0, protein: 0, water: 0 };
           const hasData = data.eaten > 0 || data.burned > 0 || data.water > 0;
+          
+          // LOGICA PENTRU ZIUA PERFECTĂ: Are 8 pahare de apă și a făcut sport!
+          const isTargetMet = data.water >= 8 && data.burned > 0;
 
           return (
             <motion.div 
@@ -104,17 +113,28 @@ export default function FitnessCalendar() {
               whileHover={{ scale: 1.05 }}
               onClick={() => setSelectedDay({ date: dateStr, stats: data })}
               className={`aspect-square border rounded-2xl p-2 flex flex-col justify-between transition-all cursor-pointer group relative overflow-hidden ${
-                hasData ? 'border-fuchsia-500/30 bg-white/5' : 'border-white/5 hover:border-white/20'
+                isTargetMet 
+                  ? 'border-lime-500/50 bg-lime-500/10 shadow-[0_0_15px_rgba(132,204,22,0.15)]' // Verde pt target atins
+                  : hasData 
+                    ? 'border-fuchsia-500/30 bg-fuchsia-500/5' // Mov pt activitate parțială
+                    : 'border-white/5 hover:border-white/20' // Gri pentru gol
               }`}
             >
               <div className="flex justify-between items-start">
-                <span className="text-xs font-bold text-gray-400 group-hover:text-white transition-colors">{day}</span>
-                {data.water > 0 && <Droplets size={10} className="text-cyan-500" />}
+                <span className={`text-xs font-bold transition-colors ${isTargetMet ? 'text-lime-400' : 'text-gray-400 group-hover:text-white'}`}>
+                  {day}
+                </span>
+                
+                {/* AFIȘĂM BIFA VERDE DACĂ TARGETUL E ATINS, ALTFEL AFIȘĂM DOAR PICĂTURA DE APĂ */}
+                {isTargetMet ? (
+                  <CheckCircle size={14} className="text-lime-500 drop-shadow-md" />
+                ) : (
+                  data.water > 0 && <Droplets size={10} className="text-cyan-500" />
+                )}
               </div>
               
-              {hasData && (
+              {hasData && !isTargetMet && (
                 <div className="flex flex-col gap-0.5 mt-auto items-end">
-                  {/* Textul cu calorii arse vizibil direct pe calendar */}
                   {data.burned > 0 && (
                     <span className="text-[10px] text-orange-400 font-bold flex items-center gap-1 leading-none">
                       -{data.burned} <Flame size={8} />
@@ -144,10 +164,26 @@ export default function FitnessCalendar() {
               className="bg-[#0a0a0a] border border-white/10 rounded-[32px] p-8 w-full max-w-md relative shadow-[0_0_50px_rgba(0,0,0,0.8)]"
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={() => setSelectedDay(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"><X size={24} /></button>
+              <button onClick={() => setSelectedDay(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors z-50">
+                <X size={24} />
+              </button>
               
+              {/* RECOMPENSA VIZUALĂ ÎN MODAL PENTRU TARGET ATINS */}
+              {selectedDay.stats.water >= 8 && selectedDay.stats.burned > 0 && (
+                <motion.div 
+                  initial={{ scale: 0, rotate: -180 }} 
+                  animate={{ scale: 1, rotate: 0 }} 
+                  transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                  className="absolute -top-12 -right-6 bg-gradient-to-br from-lime-400 to-green-600 p-4 rounded-full shadow-[0_0_30px_rgba(132,204,22,0.5)] border-4 border-[#0a0a0a] z-50"
+                >
+                  <Award size={40} className="text-black" />
+                </motion.div>
+              )}
+
               <div className="mb-8">
-                <p className="text-fuchsia-500 font-mono text-xs tracking-widest uppercase mb-1">Sumar Zilnic</p>
+                <p className="text-fuchsia-500 font-mono text-xs tracking-widest uppercase mb-1">
+                  {selectedDay.stats.water >= 8 && selectedDay.stats.burned > 0 ? '✨ Zi Perfectă!' : 'Sumar Zilnic'}
+                </p>
                 <h2 className="text-3xl font-black italic">{new Date(selectedDay.date).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long' })}</h2>
               </div>
 
@@ -171,9 +207,11 @@ export default function FitnessCalendar() {
                   <span className="font-bold text-lg">{selectedDay.stats.protein} g</span>
                 </div>
 
-                <div className="bg-white/5 border border-white/5 p-4 rounded-2xl flex justify-between items-center">
+                <div className={`border p-4 rounded-2xl flex justify-between items-center transition-colors ${selectedDay.stats.water >= 8 ? 'bg-lime-500/10 border-lime-500/30' : 'bg-white/5 border-white/5'}`}>
                   <span className="text-gray-400 text-sm flex items-center gap-2"><Droplets size={16} className="text-cyan-500"/> Hidratare</span>
-                  <span className="font-bold text-lg">{selectedDay.stats.water} pahare</span>
+                  <span className={`font-bold text-lg ${selectedDay.stats.water >= 8 ? 'text-lime-400' : 'text-white'}`}>
+                    {selectedDay.stats.water} pahare
+                  </span>
                 </div>
               </div>
             </motion.div>

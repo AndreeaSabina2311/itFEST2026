@@ -41,9 +41,9 @@ export async function DELETE(request: NextRequest) {
       message: `User ${userId} deleted successfully`,
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error?.message || 'Internal server error' },
+      { error: (error as Error)?.message || 'Internal server error' },
       { status: 500 }
     );
   }

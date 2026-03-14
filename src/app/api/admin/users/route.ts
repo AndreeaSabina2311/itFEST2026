@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/src/lib/supabaseAdmin';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Obținem lista REALĂ de utilizatori din Supabase Auth
     const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers();
@@ -17,9 +17,9 @@ export async function GET(request: NextRequest) {
       users: users,
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error?.message || 'Eroare la obținerea utilizatorilor din Supabase' },
+      { error: (error as Error)?.message || 'Eroare la obținerea utilizatorilor din Supabase' },
       { status: 500 }
     );
   }
@@ -41,8 +41,8 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json({ success: true, message: "User deleted from Supabase" }, { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting user:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }
 }

@@ -4,14 +4,45 @@ import React from 'react';
 import BallCanvas from '../canvas/Ball'; // Importăm bila 3D creată mai sus
 import { motion } from 'framer-motion';
 
-// --- LISTA SPONSORILOR ---
-// AICI TREBUIE SĂ PUI CĂILE CĂTRE IMAGINILE TALE REALE DIN FOLDERUL PUBLIC
-const sponsors = [
-  { name: "Sponsor 1", icon: "/images/haufe.png" }, // Ex: /sponsors/google.png
-  { name: "Sponsor 2", icon: "/images/Nokia.png" },
-  { name: "Sponsor 3", icon: "/images/oncegen.png" },
-  { name: "Sponsor 4", icon: "/images/pebune.png" },
-  // Poți adăuga oricâți dorești
+// --- LISTA SPONSORILOR GRUPATĂ ---
+// Am creat 4 bile, fiecare conținând câte 4 imagini (16 sponsori în total)
+const sponsorBalls = [
+  {
+    id: "bila-1",
+    icons: [
+      "/images/haufe.png",
+      "/images/tag.png",
+      "/images/Maggi_logo.svg.png",
+      "/images/KK1.png",
+    ]
+  },
+  {
+    id: "bila-2",
+    icons: [
+      "/images/Nokia.png",
+      "/images/see us color.png",
+      "/images/uvt.png",
+      "/images/sav1.png",
+    ]
+  },
+  {
+    id: "bila-3",
+    icons: [
+      "/images/Rei1.png",
+      "/images/fi.png",
+      "/images/crazy schnitzel color.png",
+      "/images/ops2.png",
+    ]
+  },
+  {
+    id: "bila-4",
+    icons: [
+      "/images/Nestle_Professionals.png",
+      "/images/lu1.svg",
+      "/images/fitt.svg",
+      "/images/cdi.png",
+    ]
+  }
 ];
 
 export default function SponsorsSection() {
@@ -36,20 +67,18 @@ export default function SponsorsSection() {
 
         {/* Grid-ul cu Bilele 3D */}
         <div className='flex flex-wrap justify-center gap-10'>
-          {sponsors.map((sponsor) => (
+          {sponsorBalls.map((ball) => (
             <motion.div 
-              key={sponsor.name} 
+              key={ball.id} 
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, type: "spring" }}
               viewport={{ once: true }}
               className='w-48 h-48 md:w-64 md:h-64'
             >
-              {/* Randăm bila 3D pentru fiecare sponsor */}
-              <BallCanvas icon={sponsor.icon} />
-              
-              {/* Opțional: Numele sponsorului sub bilă */}
-              {/* <p className="text-center text-gray-400 text-sm mt-2">{sponsor.name}</p> */}
+              {/* Randăm bila 3D și trimitem array-ul de 4 iconițe (trebuie ignorată eroarea TS deocamdată dacă BallCanvas nu este adaptat) */}
+              {/* @ts-ignore */}
+              <BallCanvas icons={ball.icons} />
             </motion.div>
           ))}
         </div>

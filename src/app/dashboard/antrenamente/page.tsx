@@ -4,15 +4,43 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Star, Clock, Flame, Trophy, X, MessageSquare, ThumbsUp, Loader2, Brain, Dumbbell, Camera, ScanLine } from 'lucide-react';
-import { supabase } from '@/src/lib/supabase';
 import PoseEstimationCanvas from '@/src/components/dashboard/PoseEstimationCanvas';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useDashboardContext } from '@/src/context/DashboardContext';
 
+interface Exercise {
+  name: string;
+  sets: string;
+  reps: string;
+  tips: string;
+}
+
+interface AiPlan {
+  warmup: string;
+  exercises: Exercise[];
+  cooldown: string;
+}
+
+interface Workout {
+  id: number;
+  title: string;
+  category: string;
+  duration: string;
+  calories: string;
+  difficulty: string;
+  rating: number;
+  reviewsCount: number;
+  image: string;
+  videoId?: string;
+  videoUrl?: string;
+  recommended: boolean;
+  reviews: { user: string; text: string; rating: number; }[];
+}
+
 // --- DATE MOCKUP (Aici poți conecta baza de date Supabase mai târziu) ---
 const CATEGORIES = ["Toate", "Full Body", "Cardio", "Picioare", "Piept & Brațe", "Abdomen"];
 
-const WORKOUTS = [
+const WORKOUTS: Workout[] = [
   {
     id: 1,
     title: "HIIT Extrem - Ardere Grăsimi",
@@ -186,9 +214,9 @@ export default function AntrenamentePage() {
   const { userId } = useAuth();
   const { dailyStats } = useDashboardContext();
   const [selectedCategory, setSelectedCategory] = useState("Toate");
-  const [selectedWorkout, setSelectedWorkout] = useState<typeof WORKOUTS[0] | null>(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [aiPlan, setAiPlan] = useState<any>(null);
+  const [aiPlan, setAiPlan] = useState<AiPlan | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   
   // Stare pentru AI Coach (Camera)
@@ -206,12 +234,12 @@ export default function AntrenamentePage() {
   const otherWorkouts = filteredWorkouts.filter(w => w.id !== recommendedWorkout?.id);
 
   // Funcție pentru a deschide modalul și a genera antrenamentul
-  const handleOpenWorkout = async (workout: typeof WORKOUTS[0]) => {
+  const handleOpenWorkout = async (workout: Workout) => {
     setIsCameraOpen(false); // Resetăm camera la deschidere
     setSelectedWorkout(workout);
     
     // Dacă avem un video (Local sau YouTube), NU mai generăm planul AI.
-    if ((workout as any).videoUrl || (workout as any).videoId) return;
+    if (workout.videoUrl || workout.videoId) return;
 
     setAiPlan(null); // Resetăm planul vechi
     setLoadingAi(true);
@@ -405,7 +433,7 @@ export default function AntrenamentePage() {
               {/* Partea Stângă: VIDEO PLAYER (Local) sau PLAN AI */}
               <div className={`${isCameraOpen ? 'w-full h-full' : 'w-full md:w-2/3'} bg-black relative flex flex-col justify-center overflow-hidden transition-all duration-500`}>
                 {/* Verificăm dacă avem Video Local SAU YouTube */}
-                {(selectedWorkout as any).videoUrl || (selectedWorkout as any).videoId ? (
+                {selectedWorkout.videoUrl || selectedWorkout.videoId ? (
                   <div className="relative w-full h-full flex">
                     
                     {/* Buton Plutitor de Ieșire (Doar în Fullscreen) */}
@@ -422,11 +450,11 @@ export default function AntrenamentePage() {
                     <div className={`relative transition-all duration-500 ${isCameraOpen ? 'w-1/2 border-r border-white/10' : 'w-full'}`}>
                       
                       {/* A. Dacă e YouTube */}
-                      {(selectedWorkout as any).videoId && !(selectedWorkout as any).videoUrl ? (
+                      {selectedWorkout.videoId && !selectedWorkout.videoUrl ? (
                         <iframe 
                           width="100%" 
                           height="100%" 
-                          src={`https://www.youtube.com/embed/${(selectedWorkout as any).videoId}?autoplay=1&rel=0&controls=1`} 
+                          src={`https://www.youtube.com/embed/${selectedWorkout.videoId}?autoplay=1&rel=0&controls=1`} 
                           title="YouTube video player" 
                           frameBorder="0" 
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -437,7 +465,7 @@ export default function AntrenamentePage() {
                       /* B. Dacă e Video Local */
                       <video
                         ref={videoRef}
-                        src={(selectedWorkout as any).videoUrl}
+                        src={selectedWorkout.videoUrl}
                         controls={!isCameraOpen}
                         autoPlay
                         loop
@@ -523,7 +551,7 @@ export default function AntrenamentePage() {
                           <h4 className="text-white font-black uppercase text-lg flex items-center gap-2">
                             <Dumbbell className="text-fuchsia-500" /> Rutina Principală
                           </h4>
-                          {aiPlan.exercises?.map((ex: any, idx: number) => (
+                          {aiPlan.exercises?.map((ex: Exercise, idx: number) => (
                             <div key={idx} className="bg-white/5 border border-white/10 p-4 rounded-xl flex items-start gap-4 hover:bg-white/10 transition-colors group">
                               <div className="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-fuchsia-500 shrink-0 group-hover:bg-fuchsia-500 group-hover:text-white transition-colors">
                                 {idx + 1}
@@ -618,7 +646,7 @@ export default function AntrenamentePage() {
                               ))}
                             </div>
                           </div>
-                          <p className="text-gray-300 text-sm italic">"{review.text}"</p>
+                          <p className="text-gray-300 text-sm italic">&quot;{review.text}&quot;</p>
                         </div>
                       ))
                     ) : (
