@@ -11,7 +11,10 @@ import {
   LineChart, 
   Settings, 
   LogOut,
+<<<<<<< HEAD
   Clock,
+=======
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
   ChevronRight
 } from 'lucide-react';
 import { supabase } from '@/src/lib/supabase';
@@ -21,7 +24,10 @@ const navItems = [
   { name: 'Acasă', href: '/dashboard', icon: Home },
   { name: 'Nutriție', href: '/dashboard/nutritie', icon: Flame },
   { name: 'Antrenamente', href: '/dashboard/antrenamente', icon: Dumbbell },
+<<<<<<< HEAD
   { name: 'Simulator', href: '/dashboard/simulator', icon: Clock },
+=======
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
   { name: 'Progres', href: '/dashboard/progres', icon: LineChart },
 ];
 

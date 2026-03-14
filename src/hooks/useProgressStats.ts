@@ -9,6 +9,7 @@ export function useProgressStats(userId: string | null | undefined) {
   const [weeklyBurned, setWeeklyBurned] = useState(0);
   const [evolutionData, setEvolutionData] = useState<{ zi: string, valoare: number, realCals: number, eaten: number, burned: number, water: number }[]>([]);
   
+<<<<<<< HEAD
   const [avgMacros, setAvgMacros] = useState({ protein: 0, carbs: 0, fat: 0 });
 
   const [prevWeeklyBurned, setPrevWeeklyBurned] = useState(0);
@@ -18,6 +19,8 @@ export function useProgressStats(userId: string | null | undefined) {
   // Heatmap Data va include acum și un flag 'isFuture'
   const [heatmapData, setHeatmapData] = useState<{ date: string, intensity: number, isFuture: boolean }[]>([]);
 
+=======
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
   const [badges, setBadges] = useState({
     titan: false,
     hidratare: false,
@@ -37,6 +40,7 @@ export function useProgressStats(userId: string | null | undefined) {
     setLoading(true);
     
     const today = new Date();
+<<<<<<< HEAD
     
     // --- SETĂRI PENTRU CALENDARUL HEATMAP ---
     const PAST_DAYS = 182; // Jumătate de an (26 săptămâni) în trecut
@@ -72,6 +76,30 @@ export function useProgressStats(userId: string | null | undefined) {
         supabase.from('meals').select('date, calories, protein, carbs, fat').eq('user_id', userId).gte('date', heatmapStartDate).lte('date', heatmapEndDate),
         supabase.from('exercises').select('date, calories_burned').eq('user_id', userId).gte('date', heatmapStartDate).lte('date', heatmapEndDate),
         supabase.from('daily_stats').select('date, water_glasses').eq('user_id', userId).gte('date', heatmapStartDate).lte('date', heatmapEndDate)
+=======
+    // Generăm ultimele 7 zile (format YYYY-MM-DD)
+    const last7Days = Array.from({length: 7}, (_, i) => {
+      const d = new Date();
+      d.setDate(today.getDate() - (6 - i));
+      return d.toISOString().split('T')[0];
+    });
+
+    const startDate = last7Days[0];
+    const endDate = last7Days[6];
+
+    try {
+      // 1. Aducem datele din ultimele 7 zile (în paralel pentru viteză)
+      const [
+        { data: { session } },
+        { data: meals },
+        { data: exercises },
+        { data: waterStats }
+      ] = await Promise.all([
+        supabase.auth.getSession(),
+        supabase.from('meals').select('date, calories').eq('user_id', userId).gte('date', startDate).lte('date', endDate),
+        supabase.from('exercises').select('date, calories_burned').eq('user_id', userId).gte('date', startDate).lte('date', endDate),
+        supabase.from('daily_stats').select('date, water_glasses').eq('user_id', userId).gte('date', startDate).lte('date', endDate)
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
       ]);
 
       if (session?.user?.user_metadata) {
@@ -83,6 +111,7 @@ export function useProgressStats(userId: string | null | undefined) {
         });
       }
 
+<<<<<<< HEAD
       // ─── CALCUL HEATMAP (196 ZILE) ───
       const generatedHeatmap = heatmapDays.map((dateStr, index) => {
         const isFuture = index >= PAST_DAYS;
@@ -156,6 +185,25 @@ export function useProgressStats(userId: string | null | undefined) {
         const calsBurned = dayExercises.reduce((sum: number, e: any) => sum + (e.calories_burned || e.calories || 0), 0);
 
         const dayWaterObj = allWater?.find(w => w.date === dateStr);
+=======
+      // --- CALCUL GRAFIC EVOLUȚIE ---
+      const dayNames = ["D", "L", "M", "M", "J", "V", "S"];
+      const TARGET_CALORIES = 2500;
+      
+      const chartData = last7Days.map(dateStr => {
+        // Fallback for meals
+        const localMeals = JSON.parse(localStorage.getItem(`meals_${userId}_${dateStr}`) || '[]');
+        const dayMeals = (meals?.filter(m => m.date === dateStr)?.length ? meals.filter(m => m.date === dateStr) : localMeals) || [];
+        const calsEaten = dayMeals.reduce((sum: number, m: any) => sum + (m.calories || 0), 0);
+        
+        // Fallback for exercises
+        const localExercises = JSON.parse(localStorage.getItem(`exercises_${userId}_${dateStr}`) || '[]');
+        const dayExercises = (exercises?.filter(e => e.date === dateStr)?.length ? exercises.filter(e => e.date === dateStr) : localExercises) || [];
+        const calsBurned = dayExercises.reduce((sum: number, e: any) => sum + (e.calories_burned || 0), 0);
+
+        // Fallback for water
+        const dayWaterObj = waterStats?.find(w => w.date === dateStr);
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
         let waterCount = 0;
         if (dayWaterObj) {
           waterCount = dayWaterObj.water_glasses || 0;
@@ -164,6 +212,7 @@ export function useProgressStats(userId: string | null | undefined) {
           if (localWater) waterCount = parseInt(localWater);
         }
 
+<<<<<<< HEAD
         const hasActivity = dayMeals.length > 0 || dayExercises.length > 0;
 
         if (i >= 7) {
@@ -203,20 +252,40 @@ export function useProgressStats(userId: string | null | undefined) {
         carbs: Math.round(calculatedTotalCarbs / 7),
         fat: Math.round(calculatedTotalFat / 7)
       });
+=======
+        const dateObj = new Date(dateStr);
+        const ziName = dayNames[dateObj.getDay()];
+        const percentage = calsEaten > 0 ? Math.min(Math.round((calsEaten / TARGET_CALORIES) * 100), 100) : 0;
+        
+        return { zi: ziName, valoare: percentage, realCals: calsEaten, eaten: calsEaten, burned: calsBurned, water: waterCount };
+      });
+      setEvolutionData(chartData);
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
 
       // --- CALCUL STREAK ---
       let currentStreak = 0;
       for (let i = 6; i >= 0; i--) {
+<<<<<<< HEAD
         if (currentWeekActivity[i]) {
           currentStreak++;
         } else if (i === 6) {
           continue; 
         } else {
           break;
+=======
+        const dateStr = last7Days[i];
+        const hasActivity = (meals?.some(m => m.date === dateStr)) || (exercises?.some(e => e.date === dateStr));
+        
+        if (hasActivity) {
+          currentStreak++;
+        } else if (i !== 6) { 
+          break; // Streak rupt
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
         }
       }
       setStreak(currentStreak);
 
+<<<<<<< HEAD
       let previousStreak = 0;
       for (let i = 6; i >= 0; i--) {
         if (previousWeekActivity[i]) {
@@ -229,12 +298,28 @@ export function useProgressStats(userId: string | null | undefined) {
       }
       setPrevStreak(previousStreak);
 
+=======
+      // --- CALCUL CALORII ARSE ---
+      const totalBurned = exercises?.reduce((sum, e) => sum + (e.calories_burned || 0), 0) || 0;
+      setWeeklyBurned(totalBurned);
+
+      // --- VERIFICARE TROFEE ---
+      const totalWater = waterStats?.reduce((sum, w) => sum + (w.water_glasses || 0), 0) || 0;
+      const workoutCount = exercises?.length || 0;
+      setWeeklyWorkoutCount(workoutCount);
+      
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
       const weeklyWaterGoalTotal = (parseInt(session?.user?.user_metadata?.water_goal || '8')) * 7;
       const weeklyWorkoutGoalNum = parseInt(session?.user?.user_metadata?.weekly_workout_goal || '3');
 
       setBadges({
+<<<<<<< HEAD
         titan: calculatedWorkoutCount >= weeklyWorkoutGoalNum,
         hidratare: calculatedTotalWater >= (weeklyWaterGoalTotal * 0.8),
+=======
+        titan: workoutCount >= weeklyWorkoutGoalNum,
+        hidratare: totalWater >= (weeklyWaterGoalTotal * 0.8), // 80% din țintă
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
         precizie: currentStreak >= 3
       });
 
@@ -257,11 +342,14 @@ export function useProgressStats(userId: string | null | undefined) {
     badges,
     userGoals,
     weeklyWorkoutCount,
+<<<<<<< HEAD
     prevWeeklyBurned,
     prevWeeklyEaten,
     prevStreak,
     avgMacros,
     heatmapData, 
+=======
+>>>>>>> 7d8d662932080c3b7c61cdb15b661648b8911fc2
     refreshData: fetchProgressData
   };
 }
