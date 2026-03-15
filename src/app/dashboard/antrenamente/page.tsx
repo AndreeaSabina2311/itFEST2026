@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Flame, Trophy, X, MessageSquare, ThumbsUp, Loader2, Brain, Dumbbell, Camera, ScanLine, Activity } from 'lucide-react';
+import { Play, Star, Clock, Flame, Trophy, X, MessageSquare, ThumbsUp, Loader2, Brain, Dumbbell, Camera, ScanLine, Activity, Sparkles } from 'lucide-react';
 import PoseEstimationCanvas from '@/src/components/dashboard/PoseEstimationCanvas';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useDashboardContext } from '@/src/context/DashboardContext';
@@ -37,7 +37,6 @@ interface Workout {
   reviews: { user: string; text: string; rating: number; }[];
 }
 
-// --- DATE MOCKUP (Aici poți conecta baza de date Supabase mai târziu) ---
 const CATEGORIES = ["Toate", "Full Body", "Cardio", "Picioare", "Piept & Brațe", "Abdomen"];
 
 const WORKOUTS: Workout[] = [
@@ -51,9 +50,7 @@ const WORKOUTS: Workout[] = [
     rating: 4.9,
     reviewsCount: 128,
     image: "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?q=80&w=1000&auto=format&fit=crop",
-    videoId: "ml6cT4AZdqI", // ID YouTube (Exemplu)
-    // videoId: "ml6cT4AZdqI", <-- Ștergem sau ignorăm YouTube
-    // videoUrl: "/videos/hiit_cardio.mp4", // <-- Comentăm asta ca să revină la YouTube
+    videoId: "ml6cT4AZdqI", 
     recommended: true,
     reviews: [
       { user: "Andrei P.", text: "M-a distrus, dar merită! 🔥", rating: 5 },
@@ -136,7 +133,7 @@ const WORKOUTS: Workout[] = [
     rating: 4.8,
     reviewsCount: 210,
     image: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=1000&auto=format&fit=crop",
-    videoId: "lKKbeJXg8b0", // Exemplu ID
+    videoId: "lKKbeJXg8b0", 
     recommended: false,
     reviews: [
       { user: "Mihai V.", text: "Foarte distractiv, trece timpul repede!", rating: 5 }
@@ -169,7 +166,7 @@ const WORKOUTS: Workout[] = [
     reviewsCount: 89,
     image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop",
     videoId: "W4eKVKwf3rQ",
-    recommended: true, // Încă o recomandare posibilă
+    recommended: true, 
     reviews: [
       { user: "Alex K.", text: "Un antrenament complet.", rating: 5 },
       { user: "George B.", text: "Ai nevoie de gantere serioase.", rating: 4 }
@@ -219,28 +216,23 @@ export default function AntrenamentePage() {
   const [aiPlan, setAiPlan] = useState<AiPlan | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   
-  // Stare pentru AI Coach (Camera)
   const [isTimeToMoveOpen, setIsTimeToMoveOpen] = useState(false);
   const [accuracyScore, setAccuracyScore] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Filtrare antrenamente
   const filteredWorkouts = WORKOUTS.filter(w => 
     selectedCategory === "Toate" ? true : w.category === selectedCategory
   );
 
-  // Găsește recomandarea (primul antrenament 'recommended' din lista filtrată sau primul disponibil)
   const recommendedWorkout = filteredWorkouts.find(w => w.recommended) || filteredWorkouts[0];
   const otherWorkouts = filteredWorkouts.filter(w => w.id !== recommendedWorkout?.id);
 
-  // Funcție pentru a deschide modalul și a genera antrenamentul
   const handleOpenWorkout = async (workout: Workout) => {
     setSelectedWorkout(workout);
     
-    // Dacă avem un video (Local sau YouTube), NU mai generăm planul AI.
     if (workout.videoUrl || workout.videoId) return;
 
-    setAiPlan(null); // Resetăm planul vechi
+    setAiPlan(null); 
     setLoadingAi(true);
 
     try {
@@ -260,14 +252,12 @@ export default function AntrenamentePage() {
       setAiPlan(data);
     } catch (error) {
       console.error(error);
-      // Fallback simplu dacă pică AI-ul
       setAiPlan({ exercises: [], warmup: "Încălzire standard 5 min", cooldown: "Stretching ușor" });
     } finally {
       setLoadingAi(false);
     }
   };
 
-  // Funcția de salvare în Supabase
   const handleFinishWorkout = async () => {
     if (!selectedWorkout) return;
     
@@ -275,10 +265,8 @@ export default function AntrenamentePage() {
 
     const caloriesValue = parseInt(selectedWorkout.calories.replace(/\D/g, '')) || 0;
     
-    // Salvăm antrenamentul în Dashboard (care va updata și baza de date și state-ul de pe prima pagină)
     await dailyStats.addExercise(selectedWorkout.title, caloriesValue);
 
-    // --- SALVARE LOCALĂ (PENTRU DEMO CALENDAR) ---
     const newExercise = {
       date: new Date().toISOString().split('T')[0],
       calories_burned: caloriesValue,
@@ -290,12 +278,11 @@ export default function AntrenamentePage() {
 
     alert(`Felicitări! Ai ars ${caloriesValue} kcal! 🔥`);
     
-    setSelectedWorkout(null); // Închidem modalul
+    setSelectedWorkout(null); 
     setAiPlan(null);
-    setIsSaving(false);       // Oprim spinner-ul
+    setIsSaving(false);       
   };
 
-  // Efect pentru a asigura că videoclipul pornește automat când se deschide modalul sau camera
   useEffect(() => {
     if (selectedWorkout && videoRef.current) {
       const playPromise = videoRef.current.play();
@@ -313,19 +300,31 @@ export default function AntrenamentePage() {
   return (
     <div className="p-6 md:p-10 min-h-screen text-white pb-32">
       
-      {/* Header */}
-      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
+      {/* Header actualizat cu Panel Premium */}
+      <div className="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        <div className="w-full lg:w-2/3">
           <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-2">
             Sala de <span className="text-fuchsia-500">Antrenament</span>
           </h1>
-          <p className="text-gray-400">Alege zona pe care vrei să o lucrezi astăzi.</p>
+          
+          {/* PANELUL PREMIUM */}
+          <div className="mt-4 flex items-start sm:items-center gap-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] relative overflow-hidden group/panel transition-all hover:border-fuchsia-500/30 hover:shadow-[0_8px_30px_rgba(217,70,239,0.15)] w-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/10 to-transparent pointer-events-none opacity-50 group-hover/panel:opacity-100 transition-opacity" />
+            
+            <div className="bg-fuchsia-500/20 p-2.5 rounded-xl border border-fuchsia-500/30 shrink-0 relative z-10 shadow-[inset_0_0_15px_rgba(217,70,239,0.2)]">
+              <Dumbbell size={22} className="text-fuchsia-400" />
+            </div>
+            
+            <p className="text-gray-300 font-medium text-sm sm:text-base leading-relaxed relative z-10">
+              Alege zona pe care vrei să o lucrezi astăzi și lasă <span className="text-white font-bold drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">AI-ul</span> să îți genereze un plan perfect adaptat de <span className="inline-block mt-1 sm:mt-0 text-fuchsia-400 font-black uppercase tracking-widest text-[10px] sm:text-xs sm:mx-1 bg-fuchsia-500/10 px-2.5 py-1 rounded-lg border border-fuchsia-500/20 shadow-[0_0_10px_rgba(217,70,239,0.2)]">Antrenament</span>.
+            </p>
+          </div>
         </div>
         
         {/* Butonul Time To Move (IT-ist) */}
         <button 
           onClick={() => setIsTimeToMoveOpen(true)}
-          className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] hover:-translate-y-1 transition-all"
+          className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] hover:-translate-y-1 transition-all shrink-0 h-fit"
         >
           <Activity className="animate-pulse" size={24} />
           <div className="text-left flex flex-col">
@@ -445,13 +444,9 @@ export default function AntrenamentePage() {
               
               {/* Partea Stângă: VIDEO PLAYER (Local) sau PLAN AI */}
               <div className="w-full md:w-2/3 bg-black relative flex flex-col justify-center overflow-hidden transition-all duration-500">
-                {/* Verificăm dacă avem Video Local SAU YouTube */}
                 {selectedWorkout.videoUrl || selectedWorkout.videoId ? (
                   <div className="relative w-full h-full flex">                     
-                    {/* CONTAINER VIDEO (LOCAL SAU YOUTUBE) */}
                     <div className="relative transition-all duration-500 w-full h-full">
-                      
-                      {/* A. Dacă e YouTube */}
                       {selectedWorkout.videoId && !selectedWorkout.videoUrl ? (
                         <iframe 
                           width="100%" 
@@ -464,7 +459,6 @@ export default function AntrenamentePage() {
                           className="w-full h-full object-contain bg-black"
                         ></iframe>
                       ) : (
-                      /* B. Dacă e Video Local */
                       <video
                         ref={videoRef}
                         src={selectedWorkout.videoUrl}
@@ -478,7 +472,6 @@ export default function AntrenamentePage() {
                     </div>
                   </div>
                 ) : (
-                  /* Cazul 2: Nu avem video, folosim AI-ul */
                   <div className="h-full p-8 overflow-y-auto custom-scrollbar bg-[#050505]">
                     {loadingAi ? (
                       <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
@@ -532,7 +525,6 @@ export default function AntrenamentePage() {
               {/* Partea Dreaptă: Detalii & Recenzii */}
               <div className="w-full md:w-1/3 flex flex-col h-[50vh] md:h-auto border-l border-white/10 transition-all duration-500">
                 
-                {/* Header Modal */}
                 <div className="p-6 border-b border-white/10 flex justify-between items-start">
                   <div>
                     <h3 className="text-xl font-black italic uppercase leading-tight mb-1">{selectedWorkout.title}</h3>
@@ -546,7 +538,6 @@ export default function AntrenamentePage() {
                   </button>
                 </div>
 
-                {/* Tab-uri / Statistici */}
                 <div className="grid grid-cols-3 border-b border-white/10 divide-x divide-white/10 bg-white/5">
                   <div className="p-4 text-center">
                     <div className="text-fuchsia-500 font-black text-lg">{selectedWorkout.calories}</div>
@@ -564,7 +555,6 @@ export default function AntrenamentePage() {
                   </div>
                 </div>
 
-                {/* Lista de Recenzii (Scrollable) */}
                 <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                   <h4 className="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4 flex items-center gap-2">
                     <MessageSquare size={14} /> Ce spun sportivii
@@ -593,7 +583,6 @@ export default function AntrenamentePage() {
                   </div>
                 </div>
 
-                {/* Footer Modal - Buton Acțiune */}
                 <div className="p-4 border-t border-white/10 bg-black/20">
                   <button 
                     onClick={handleFinishWorkout}

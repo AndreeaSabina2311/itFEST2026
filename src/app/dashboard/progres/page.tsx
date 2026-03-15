@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
+// Am adăugat Sparkles la importuri
 import {
   TrendingUp, Trophy, Zap, Star, Droplets, Flame, Utensils,
   Target, Activity, BarChart2, Calendar, Quote,
-  ArrowUpRight, ArrowDownRight, Dumbbell, Award, Minus
+  ArrowUpRight, ArrowDownRight, Dumbbell, Award, Minus, Sparkles
 } from 'lucide-react';
 import { useDashboardContext } from '@/src/context/DashboardContext';
 import { supabase } from '@/src/lib/supabase';
@@ -376,7 +377,7 @@ export default function ProgresPage() {
           className="bg-black/50 border border-white/8 p-5 lg:p-7 rounded-[28px] backdrop-blur-2xl shadow-2xl"
         >
           <div className="flex flex-col justify-between items-start gap-4">
-            <div>
+            <div className="w-full">
               <div className="flex items-center gap-2 mb-1">
                 <span className="w-2 h-2 rounded-full bg-fuchsia-500 animate-pulse shadow-[0_0_8px_#d946ef]" />
                 <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Live Analytics</span>
@@ -384,7 +385,19 @@ export default function ProgresPage() {
               <h1 className="text-2xl lg:text-4xl font-black italic tracking-tighter text-white mt-1">
                 Analiza <span className="text-fuchsia-400 drop-shadow-[0_0_20px_#d946ef]">Progresului</span>
               </h1>
-              <p className="text-gray-500 text-sm mt-1">Evoluția ta din ultimele 7 zile — comparată, analizată, vizualizată.</p>
+              
+              {/* ── PANELUL PREMIUM ── */}
+              <div className="mt-4 flex items-start sm:items-center gap-4 bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-md border border-white/10 p-5 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.4)] relative overflow-hidden group/panel transition-all hover:border-fuchsia-500/30 hover:shadow-[0_8px_30px_rgba(217,70,239,0.15)] w-full max-w-2xl">
+                <div className="absolute inset-0 bg-gradient-to-r from-fuchsia-500/10 to-transparent pointer-events-none opacity-50 group-hover/panel:opacity-100 transition-opacity" />
+                
+                <div className="bg-fuchsia-500/20 p-2.5 rounded-xl border border-fuchsia-500/30 shrink-0 relative z-10 shadow-[inset_0_0_15px_rgba(217,70,239,0.2)]">
+                  <TrendingUp size={22} className="text-fuchsia-400" />
+                </div>
+                
+                <p className="text-gray-300 font-medium text-sm sm:text-base leading-relaxed relative z-10">
+                  Evoluția ta din ultimele <span className="text-white font-bold drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">7 zile</span> — comparată, analizată și vizualizată detaliat cu ajutorul <span className="inline-block mt-1 sm:mt-0 text-fuchsia-400 font-black uppercase tracking-widest text-[10px] sm:text-xs sm:mx-1 bg-fuchsia-500/10 px-2.5 py-1 rounded-lg border border-fuchsia-500/20 shadow-[0_0_10px_rgba(217,70,239,0.2)]">AI-ului</span>.
+                </p>
+              </div>
             </div>
           </div>
         </motion.header>
@@ -469,7 +482,6 @@ export default function ProgresPage() {
                 </div>
               </div>
 
-              {/* AICI ESTE SECRETUL: flex-1 și min-h-[320px] fac graficul TALL */}
               <div className="relative flex-1 flex flex-col w-full min-h-[320px]">
                 <AnimatePresence mode="wait">
                   {/* TAB: CALORII */}
@@ -480,7 +492,6 @@ export default function ProgresPage() {
                         <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500 shadow-[0_0_8px_#f97316]" /> Ars</div>
                       </div>
                       
-                      {/* Graficul propriu-zis se întinde 100% */}
                       <div className="flex items-end justify-between gap-2 sm:gap-4 flex-1 w-full relative">
                         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
                           {[0, 1, 2, 3, 4].map(i => <div key={i} className="border-b border-white/5 w-full" />)}

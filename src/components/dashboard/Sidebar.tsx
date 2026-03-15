@@ -78,7 +78,7 @@ export default function Sidebar() {
           </div>
           <div className="flex flex-col justify-center">
             <span className="font-black tracking-widest uppercase text-xs text-white leading-tight">Queen&King</span>
-            <span className="font-black tracking-widest uppercase text-[10px] text-fuchsia-500 leading-tight">Cardio</span>
+            <span className="font-black tracking-widest uppercase text-[10px] text-fuchsia-500 leading-tight">Fit</span>
           </div>
         </Link>
       </div>
