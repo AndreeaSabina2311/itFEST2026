@@ -41,7 +41,7 @@ export default function TimeMachineSimulator() {
         const userMeta = session.user.user_metadata || {};
         console.log("✅ Setări găsite:", userMeta);
 
-        // Căutăm în metadata, iar dacă nu e acolo, ne uităm în profil
+        // Căutăm în metadata, iar dacă nu es acolo, ne uităm în profil
         const rawWeight = userMeta.weight ?? profile?.current_weight ?? profile?.weight ?? 75;
         const rawHeight = userMeta.height ?? profile?.height ?? 170;
         const rawAge = userMeta.age ?? profile?.age ?? 30;

@@ -1,18 +1,11 @@
 "use client";
 
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-=======
-import React from 'react';
->>>>>>> cf1ae22a259f9391ac1f0aa4377454bd986eaeaf
 import { useRouter } from 'next/navigation';
 import { Flame, Droplet, Dumbbell } from 'lucide-react';
 import StatCard from '@/src/components/dashboard/StatCard';
 import { useDashboardContext } from '@/src/context/DashboardContext';
-<<<<<<< HEAD
 import { supabase } from '@/src/lib/supabase';
-=======
->>>>>>> cf1ae22a259f9391ac1f0aa4377454bd986eaeaf
 
 interface Props {
   onOpenWorkout: () => void;
@@ -23,7 +16,6 @@ export default function DashboardStatsGrid({ onOpenWorkout, onOpenWater }: Props
   const router = useRouter();
   const { dailyStats } = useDashboardContext();
   const { totalCalories, waterGlasses, todayWorkout, loading } = dailyStats;
-<<<<<<< HEAD
   const [targetCalories, setTargetCalories] = useState<number>(2500);
 
   useEffect(() => {
@@ -55,6 +47,7 @@ export default function DashboardStatsGrid({ onOpenWorkout, onOpenWater }: Props
         
         const gender = String(userMeta.gender ?? profile?.gender ?? 'masculin').toLowerCase();
         const activityLevel = String(userMeta.activity_level ?? profile?.activity_level ?? 'sedentar').toLowerCase();
+        const goal = String(userMeta.goal ?? profile?.goal ?? 'mentinere').toLowerCase();
 
         let bmr = (10 * weight) + (6.25 * height) - (5 * age);
         bmr = (gender.includes('masculin') || gender === 'm') ? bmr + 5 : bmr - 161;
@@ -64,7 +57,10 @@ export default function DashboardStatsGrid({ onOpenWorkout, onOpenWater }: Props
         else if (activityLevel.includes('moderat')) multiplier = 1.55;
         else if (activityLevel.includes('foarte') || activityLevel.includes('activ')) multiplier = 1.725;
 
-        const calculatedTdee = Math.round(bmr * multiplier);
+        let calculatedTdee = Math.round(bmr * multiplier);
+        if (goal.includes('slabi') || goal.includes('slăbi') || goal.includes('pierd')) calculatedTdee -= 500;
+        else if (goal.includes('masa') || goal.includes('masă') || goal.includes('muscul') || goal.includes('cres')) calculatedTdee += 300;
+
         const userCalorieGoal = userMeta.calorie_goal ? parseInt(String(userMeta.calorie_goal)) : calculatedTdee;
         
         setTargetCalories(userCalorieGoal);
@@ -78,11 +74,6 @@ export default function DashboardStatsGrid({ onOpenWorkout, onOpenWater }: Props
 
   // Calculăm progresul pentru barele animate (maxim 100%)
   const calProgress = Math.min((totalCalories / targetCalories) * 100, 100);
-=======
-
-  // Calculăm progresul pentru barele animate (maxim 100%)
-  const calProgress = Math.min((totalCalories / 2500) * 100, 100);
->>>>>>> cf1ae22a259f9391ac1f0aa4377454bd986eaeaf
   const waterProgress = Math.min((waterGlasses / 8) * 100, 100);
   const workoutProgress = todayWorkout !== "Fără antrenament" ? 100 : 0;
 
@@ -92,11 +83,7 @@ export default function DashboardStatsGrid({ onOpenWorkout, onOpenWater }: Props
         icon={<Flame size={24} className="text-orange-500" />} 
         title="Calorii Consumate" 
         value={loading ? "..." : totalCalories.toLocaleString('en-US')} 
-<<<<<<< HEAD
         subtext={`/ ${targetCalories.toLocaleString('en-US')} kcal recomandate`} 
-=======
-        subtext="/ 2,500 kcal recomandate" 
->>>>>>> cf1ae22a259f9391ac1f0aa4377454bd986eaeaf
         progress={calProgress}
         onClick={() => router.push('/dashboard/nutritie')} 
       />
