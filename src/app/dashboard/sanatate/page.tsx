@@ -226,7 +226,7 @@ export default function SanatatePage() {
 
           <div className="h-96 w-full relative z-10">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+              <LineChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 25 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#ffffff10" />
                 <XAxis dataKey="formattedDate" allowDuplicatedCategory={true} tick={{ fill: '#9ca3af', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dy={15} />
                 <YAxis domain={[0, 100]} tick={{ fill: '#9ca3af', fontSize: 12, fontWeight: 500 }} axisLine={false} tickLine={false} dx={-10} />
