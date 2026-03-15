@@ -53,9 +53,9 @@ export default function HeroSection() {
           variants={itemVariants}
           className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter leading-tight mb-6 text-white"
         >
-          Claim your Crown. <br />
+          Claim your <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-purple-400 pr-2">
-            Tailored by AI.
+          Crown.
           </span>
         </motion.h1>
 

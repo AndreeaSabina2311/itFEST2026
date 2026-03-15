@@ -113,7 +113,7 @@ export default function TestimonialsSection() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-20">
         <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tight italic">
-          Vocea <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-purple-400">Comunității</span>
+          Vocea <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-purple-400 pr-2">Comunității</span>
         </h2>
       </motion.div>
 
@@ -192,7 +192,7 @@ export default function TestimonialsSection() {
                         ))}
                       </div>
                     </div>
-                    <textarea required value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Cum te-a ajutat Queen&King Cardio?" rows={4} className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 text-white focus:border-fuchsia-500 outline-none resize-none" />
+                    <textarea required value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Cum te-a ajutat Queen&King Fit?" rows={4} className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-5 text-white focus:border-fuchsia-500 outline-none resize-none" />
                     <button type="submit" disabled={isSubmitting} className="w-full relative bg-fuchsia-600 py-5 font-black text-white uppercase tracking-[0.2em] rounded-2xl transition-all flex justify-center items-center gap-3">
                       {isSubmitting ? <Loader2 className="animate-spin" size={24} /> : <><Send size={18} /> Publică Review</>}
                     </button>

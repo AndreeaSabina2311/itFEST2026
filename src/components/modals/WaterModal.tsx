@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { X, Droplet, Plus } from 'lucide-react';
-import { useUserGoals } from '@/src/hooks/useUserGoals'; // NOU
+// Am adăugat Loader2
+import { X, Droplet, Plus, Loader2 } from 'lucide-react';
+import { useUserGoals } from '@/src/hooks/useUserGoals';
 
 interface WaterModalProps {
   isOpen: boolean;
@@ -14,7 +15,8 @@ interface WaterModalProps {
 }
 
 export default function WaterModal({ isOpen, onClose, waterGlasses, drinkWater, isSavingWater }: WaterModalProps) {
-  const { targetWater } = useUserGoals(); // Preluăm dinamic obiectivul
+  // Extragem loadingGoals
+  const { targetWater, loadingGoals } = useUserGoals();
 
   if (!isOpen) return null;
 
@@ -40,12 +42,13 @@ export default function WaterModal({ isOpen, onClose, waterGlasses, drinkWater, 
             <Droplet size={40} className={isSavingWater ? "animate-pulse" : ""} />
           </div>
           <h2 className="text-3xl font-black italic tracking-tighter text-white">Hidratare</h2>
-          <p className="text-gray-400 mt-2 text-sm">Obiectivul tău zilnic este de {targetWater} pahare.</p>
+          <p className="text-gray-400 mt-2 text-sm flex items-center justify-center gap-1">
+            Obiectivul tău zilnic este de {loadingGoals ? <Loader2 size={14} className="animate-spin" /> : targetWater} pahare.
+          </p>
         </div>
 
-        {/* Progresul vizual cu picături (am adăugat flex-wrap în caz că ai nevoie de 10+ pahare) */}
         <div className="flex flex-wrap justify-center items-center gap-2 mb-8 relative z-10">
-          {[...Array(targetWater)].map((_, i) => (
+          {[...Array(loadingGoals ? 8 : targetWater)].map((_, i) => (
             <div 
               key={i} 
               className={`w-5 h-8 rounded-full transition-all duration-500 ${
@@ -58,14 +61,16 @@ export default function WaterModal({ isOpen, onClose, waterGlasses, drinkWater, 
         </div>
 
         <div className="flex flex-col gap-4 relative z-10">
-          <div className="text-center">
+          <div className="text-center flex items-center justify-center gap-1">
             <span className="text-5xl font-black text-cyan-400">{waterGlasses}</span>
-            <span className="text-xl text-gray-500 font-bold"> / {targetWater}</span>
+            <span className="text-xl text-gray-500 font-bold flex items-center gap-1">
+              / {loadingGoals ? <Loader2 size={20} className="animate-spin" /> : targetWater}
+            </span>
           </div>
 
           <button 
             onClick={drinkWater} 
-            disabled={isSavingWater || waterGlasses >= targetWater} // Aici butonul se va dezactiva la atingerea limitei
+            disabled={isSavingWater || (!loadingGoals && waterGlasses >= targetWater)}
             className="w-full py-4 bg-cyan-500 text-black font-black rounded-2xl hover:bg-cyan-400 hover:scale-[1.02] transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-2 disabled:opacity-50 shadow-[0_0_20px_rgba(6,182,212,0.3)]"
           >
             <Plus size={20} /> Bea un pahar

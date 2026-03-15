@@ -2,8 +2,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { X, Activity } from 'lucide-react';
-import { useUserGoals } from '@/src/hooks/useUserGoals'; // NOU: Preluăm obiectivele aici!
+// Am adăugat Loader2 aici:
+import { X, Activity, Loader2 } from 'lucide-react';
+import { useUserGoals } from '@/src/hooks/useUserGoals'; 
 
 type Meal = {
   id: string;
@@ -20,8 +21,8 @@ interface ProteinModalProps {
 }
 
 export default function ProteinModal({ isOpen, onClose, totalProteins, meals }: ProteinModalProps) {
-  // O singură linie face toată treaba:
-  const { targetProtein } = useUserGoals();
+  // Extragem și loadingGoals!
+  const { targetProtein, loadingGoals } = useUserGoals();
 
   if (!isOpen) return null; 
 
@@ -47,8 +48,10 @@ export default function ProteinModal({ isOpen, onClose, totalProteins, meals }: 
         
         <div className="flex items-center justify-between text-sm bg-blue-500/10 text-blue-400 p-4 rounded-xl border border-blue-500/20 mb-4">
           <span className="font-semibold">Total Consumat:</span>
-          {/* Afișăm dinamic obiectivul */}
-          <span className="font-bold text-xl text-white">{totalProteins} / {targetProtein} g</span>
+          {/* AICI ESTE MAGIA: Dacă încarcă, arată spinner-ul, altfel arată numărul */}
+          <span className="font-bold text-xl text-white flex items-center gap-1">
+            {totalProteins} / {loadingGoals ? <Loader2 size={18} className="animate-spin text-blue-400" /> : targetProtein} g
+          </span>
         </div>
 
         <div className="space-y-3">

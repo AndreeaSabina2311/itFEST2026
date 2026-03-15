@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Flame, Activity, Droplets, Dumbbell } from 'lucide-react';
-import { useUserGoals } from '@/src/hooks/useUserGoals'; // NOU: Aducem obiectivele!
+import { Flame, Activity, Droplets, Dumbbell, Loader2 } from 'lucide-react';
+import { useUserGoals } from '@/src/hooks/useUserGoals';
 
 interface StatsBentoGridProps {
   totalCalories: number;
@@ -33,8 +33,8 @@ export default function StatsBentoGrid({
   handleWorkoutClick
 }: StatsBentoGridProps) {
   
-  // AICI ESTE MAGIA: Preluăm datele personalizate din profilul tău
-  const { targetCalories, targetProtein, targetWater } = useUserGoals();
+  // Preluăm datele și starea de loading
+  const { targetCalories, targetProtein, targetWater, loadingGoals } = useUserGoals();
   
   const containerVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } } };
   const itemVariants = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 70, damping: 15 } } };
@@ -55,7 +55,9 @@ export default function StatsBentoGrid({
           </div>
           <div className="flex items-end gap-2 text-white">
             <span className="text-4xl lg:text-5xl font-bold tracking-tighter">{totalCalories}</span>
-            <span className="text-gray-500 font-medium mb-1">/ {targetCalories} kcal</span>
+            <span className="text-gray-500 font-medium mb-1">
+              / {loadingGoals ? <Loader2 size={14} className="inline animate-spin"/> : targetCalories} kcal
+            </span>
           </div>
         </div>
         
@@ -83,7 +85,9 @@ export default function StatsBentoGrid({
           </div>
           <div className="flex items-end gap-2 text-white mt-auto">
             <span className="text-4xl lg:text-5xl font-bold tracking-tighter">{totalProteins}</span>
-            <span className="text-gray-500 font-medium mb-1">g / {targetProtein}g</span>
+            <span className="text-gray-500 font-medium mb-1">
+              g / {loadingGoals ? <Loader2 size={14} className="inline animate-spin"/> : targetProtein}g
+            </span>
           </div>
         </div>
         
@@ -131,7 +135,9 @@ export default function StatsBentoGrid({
           <div className="flex items-end justify-between mt-auto">
             <div className="flex items-end gap-2 text-white">
               <span className="text-4xl lg:text-5xl font-bold tracking-tighter">{currentWater}</span>
-              <span className="text-gray-500 font-medium mb-1">/ {targetWater} ph</span>
+              <span className="text-gray-500 font-medium mb-1">
+                / {loadingGoals ? <Loader2 size={14} className="inline animate-spin"/> : targetWater} ph
+              </span>
             </div>
             <button 
               onClick={handleDrinkWater}

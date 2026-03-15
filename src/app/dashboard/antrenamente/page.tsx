@@ -3,8 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Star, Clock, Flame, Trophy, X, MessageSquare, ThumbsUp, Loader2, Brain, Dumbbell, Camera, ScanLine, Activity, Sparkles } from 'lucide-react';
-import PoseEstimationCanvas from '@/src/components/dashboard/PoseEstimationCanvas';
+import { Play, Star, Clock, Flame, Trophy, X, MessageSquare, ThumbsUp, Loader2, Brain, Dumbbell, Camera, ScanLine, Activity, Sparkles, Wind } from 'lucide-react';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useDashboardContext } from '@/src/context/DashboardContext';
 
@@ -44,13 +43,13 @@ const WORKOUTS: Workout[] = [
     id: 1,
     title: "HIIT Extrem - Ardere Grăsimi",
     category: "Cardio",
-    duration: "20 min",
+    duration: "15 min",
     calories: "350 kcal",
     difficulty: "Avansat",
     rating: 4.9,
     reviewsCount: 128,
     image: "https://images.unsplash.com/photo-1601422407692-ec4eeec1d9b3?q=80&w=1000&auto=format&fit=crop",
-    videoId: "ml6cT4AZdqI", 
+    videoId: "1skBf6h2ksI", // Noul link (Pamela Reif - 15 Min Full Body HIIT)
     recommended: true,
     reviews: [
       { user: "Andrei P.", text: "M-a distrus, dar merită! 🔥", rating: 5 },
@@ -61,13 +60,13 @@ const WORKOUTS: Workout[] = [
     id: 2,
     title: "Picioare de Oțel & Fese",
     category: "Picioare",
-    duration: "45 min",
-    calories: "400 kcal",
+    duration: "12 min",
+    calories: "200 kcal",
     difficulty: "Mediu",
     rating: 4.7,
     reviewsCount: 85,
     image: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=1000&auto=format&fit=crop",
-    videoUrl: "/genuflexiuni_corecte.mp4",
+    videoId: "Fu_oExrPX68", // Pamela Reif - 12 Min Leg Workout
     recommended: false,
     reviews: [
       { user: "Ionut T.", text: "Nu mai pot merge, 10/10.", rating: 5 },
@@ -84,7 +83,7 @@ const WORKOUTS: Workout[] = [
     rating: 4.5,
     reviewsCount: 340,
     image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1000&auto=format&fit=crop",
-    videoId: "1f8yoFFdkcY",
+    videoId: "1f8yoFFdkcY", // Pamela Reif - 10 Min Beginner Ab Workout
     recommended: false,
     reviews: [
       { user: "Elena D.", text: "Scurt și la obiect.", rating: 5 },
@@ -93,15 +92,15 @@ const WORKOUTS: Workout[] = [
   },
   {
     id: 4,
-    title: "Piept Masiv Acasă",
+    title: "Piept & Spate Acasă",
     category: "Piept & Brațe",
-    duration: "30 min",
+    duration: "15 min",
     calories: "250 kcal",
     difficulty: "Mediu",
     rating: 4.8,
     reviewsCount: 92,
     image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1000&auto=format&fit=crop",
-    videoId: "IODxDxX7oi4",
+    videoId: "_bpnk9mxDk0", // Pamela Reif - 15 Min Complete Upper Body
     recommended: false,
     reviews: [
       { user: "Robert C.", text: "Pompare maximă!", rating: 5 }
@@ -109,15 +108,15 @@ const WORKOUTS: Workout[] = [
   },
   {
     id: 5,
-    title: "Yoga pentru Mobilitate",
+    title: "Mobilitate & Stretching",
     category: "Full Body",
-    duration: "25 min",
-    calories: "100 kcal",
+    duration: "6 min",
+    calories: "50 kcal",
     difficulty: "Ușor",
     rating: 4.9,
     reviewsCount: 56,
     image: "https://images.unsplash.com/photo-1591291621164-2c6367723315?q=80&w=1000&auto=format&fit=crop",
-    videoId: "v7AYKMP6rOE",
+    videoId: "uaQyf7dbAMM", // Pamela Reif - 6 Min Upper Body Mobility + Stretch
     recommended: false,
     reviews: [
       { user: "Ana M.", text: "Mă simt mult mai relaxată.", rating: 5 }
@@ -125,15 +124,15 @@ const WORKOUTS: Workout[] = [
   },
   {
     id: 6,
-    title: "Kickboxing Cardio Fun",
+    title: "Cardio Dance Fun",
     category: "Cardio",
-    duration: "30 min",
-    calories: "450 kcal",
+    duration: "15 min",
+    calories: "250 kcal",
     difficulty: "Mediu",
     rating: 4.8,
     reviewsCount: 210,
     image: "https://images.unsplash.com/photo-1599058945522-28d584b6f0ff?q=80&w=1000&auto=format&fit=crop",
-    videoId: "lKKbeJXg8b0", 
+    videoId: "sVt9cqNheOE", // Noul link (Pamela Reif - 15 Min Sweaty Dance Workout)
     recommended: false,
     reviews: [
       { user: "Mihai V.", text: "Foarte distractiv, trece timpul repede!", rating: 5 }
@@ -149,7 +148,7 @@ const WORKOUTS: Workout[] = [
     rating: 4.6,
     reviewsCount: 115,
     image: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=1000&auto=format&fit=crop",
-    videoId: "hAGfBjvIRFI",
+    videoId: "fQJ3ydfSAP0", // Pamela Reif - 15 Min Standing Arms
     recommended: false,
     reviews: [
       { user: "Larisa P.", text: "Ard brațele incredibil!", rating: 5 }
@@ -157,15 +156,15 @@ const WORKOUTS: Workout[] = [
   },
   {
     id: 8,
-    title: "Full Body Dumbbell Crush",
+    title: "Upper Body Dumbbell Crush",
     category: "Full Body",
-    duration: "40 min",
-    calories: "500 kcal",
+    duration: "10 min",
+    calories: "200 kcal",
     difficulty: "Avansat",
     rating: 5.0,
     reviewsCount: 89,
     image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop",
-    videoId: "W4eKVKwf3rQ",
+    videoId: "GJiEUi92-xE", // Pamela Reif - 10 Min Upper Body + Weights
     recommended: true, 
     reviews: [
       { user: "Alex K.", text: "Un antrenament complet.", rating: 5 },
@@ -174,31 +173,31 @@ const WORKOUTS: Workout[] = [
   },
   {
     id: 9,
-    title: "Plank Challenge - Core",
+    title: "Killer Sixpack Challenge",
     category: "Abdomen",
-    duration: "5 min",
-    calories: "50 kcal",
+    duration: "10 min",
+    calories: "150 kcal",
     difficulty: "Mediu",
     rating: 4.4,
     reviewsCount: 540,
     image: "https://static.nike.com/a/images/f_auto/dpr_1.0,cs_srgb/w_1212,c_limit/ac7671a0-c57c-417b-91d1-de7f6de6bf0b/7-trainer-approved-plank-variations.jpg",
-    videoId: "pSHjTRCQxIw",
+    videoId: "xXeoKMS0OVM", // Pamela Reif - 10 Min Killer Sixpack
     recommended: false,
     reviews: [
-      { user: "Cristina", text: "Cele mai lungi 5 minute din viața mea.", rating: 4 }
+      { user: "Cristina", text: "Cele mai lungi 10 minute din viața mea.", rating: 4 }
     ]
   },
   {
     id: 10,
     title: "Fese Bombate - Glute Focus",
     category: "Picioare",
-    duration: "25 min",
+    duration: "15 min",
     calories: "280 kcal",
     difficulty: "Mediu",
     rating: 4.9,
     reviewsCount: 312,
     image: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=1000&auto=format&fit=crop",
-    videoId: "pL8ZPAyXjM4",
+    videoId: "s3PR9pySd1E", // Pamela Reif - 15 Min Booty Workout Booty Band
     recommended: false,
     reviews: [
       { user: "Ioana S.", text: "Rezultate vizibile după 2 săptămâni!", rating: 5 },
@@ -216,8 +215,8 @@ export default function AntrenamentePage() {
   const [aiPlan, setAiPlan] = useState<AiPlan | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   
-  const [isTimeToMoveOpen, setIsTimeToMoveOpen] = useState(false);
-  const [accuracyScore, setAccuracyScore] = useState(0);
+  const [isRecoveryOpen, setIsRecoveryOpen] = useState(false);
+  const [breathConfig, setBreathConfig] = useState({ phase: 'Inspiră', time: 4, duration: 4 });
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const filteredWorkouts = WORKOUTS.filter(w => 
@@ -297,6 +296,27 @@ export default function AntrenamentePage() {
     setMounted(true);
   }, []);
 
+  // Logica pentru timer-ul de respirație (Metoda 4-7-8)
+  useEffect(() => {
+    if (!isRecoveryOpen) {
+      setBreathConfig({ phase: 'Inspiră', time: 4, duration: 4 }); // Resetăm când se închide modalul
+      return;
+    }
+    
+    const interval = setInterval(() => {
+      setBreathConfig(prev => {
+        if (prev.time > 1) {
+          return { ...prev, time: prev.time - 1 };
+        } else {
+          if (prev.phase === 'Inspiră') return { phase: 'Menține', time: 7, duration: 7 };
+          if (prev.phase === 'Menține') return { phase: 'Expiră', time: 8, duration: 8 };
+          return { phase: 'Inspiră', time: 4, duration: 4 };
+        }
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isRecoveryOpen]);
+
   return (
     <div className="p-6 md:p-10 min-h-screen text-white pb-32">
       
@@ -321,15 +341,15 @@ export default function AntrenamentePage() {
           </div>
         </div>
         
-        {/* Butonul Time To Move (IT-ist) */}
+        {/* Butonul Recuperare Cardiacă */}
         <button 
-          onClick={() => setIsTimeToMoveOpen(true)}
-          className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] hover:-translate-y-1 transition-all shrink-0 h-fit"
+          onClick={() => setIsRecoveryOpen(true)}
+          className="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-black px-6 py-4 rounded-2xl flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:-translate-y-1 transition-all shrink-0 h-fit"
         >
-          <Activity className="animate-pulse" size={24} />
+          <Wind className="animate-pulse" size={24} />
           <div className="text-left flex flex-col">
-            <span className="text-[10px] uppercase tracking-widest text-cyan-200 leading-none mb-1">Pauză pentru IT-iști</span>
-            <span className="leading-none text-sm">TIME TO MOVE (5 MIN)</span>
+            <span className="text-[10px] uppercase tracking-widest text-emerald-200 leading-none mb-1">Recuperare Cardiacă</span>
+            <span className="leading-none text-sm">RESPIRAȚIE (4-7-8)</span>
           </div>
         </button>
       </div>
@@ -605,59 +625,63 @@ export default function AntrenamentePage() {
       document.body
       )}
 
-      {/* MODAL TIME TO MOVE (AI CAMERA FULLSCREEN) */}
+      {/* MODAL RECUPERARE CARDIACĂ / RESPIRAȚIE */}
       {mounted && createPortal(
         <AnimatePresence>
-          {isTimeToMoveOpen && (
+          {isRecoveryOpen && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4"
             >
-              <div className="w-full h-full max-w-7xl max-h-[95vh] relative flex flex-col border border-white/10 shadow-2xl rounded-3xl overflow-hidden bg-[#030303]">
+              <div className="w-full h-full max-w-7xl max-h-[95vh] relative flex flex-col border border-white/10 shadow-2xl rounded-3xl overflow-hidden bg-[#030303] items-center justify-center">
                 
-                {/* Header Time to Move */}
-                <div className="absolute top-6 left-6 z-50 bg-black/60 backdrop-blur-md px-6 py-4 rounded-2xl border border-cyan-500/30 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-                  <h2 className="text-2xl font-black text-cyan-400 italic mb-1 uppercase tracking-widest flex items-center gap-3">
-                    <Camera size={24} /> Time to Move
+                {/* Header Recuperare */}
+                <div className="absolute top-6 left-0 z-50 bg-black/60 backdrop-blur-md pl-5 pr-6 py-4 rounded-r-2xl border-y border-r border-emerald-500/30 shadow-[5px_0_20px_rgba(16,185,129,0.2)]">
+                  <h2 className="text-2xl font-black text-emerald-400 italic mb-1 uppercase tracking-widest flex items-center gap-3">
+                    <Wind size={24} /> Recuperare Cardiacă
                   </h2>
-                  <p className="text-gray-300 text-sm">Ridică-te și mișcă-te! AI-ul îți evaluează postura.</p>
+                  <p className="text-gray-300 text-sm">Respiră profund pentru a-ți normaliza ritmul cardiac.</p>
                 </div>
 
                 {/* Close Button */}
                 <button 
-                  onClick={() => setIsTimeToMoveOpen(false)}
+                  onClick={() => setIsRecoveryOpen(false)}
                   className="absolute top-6 right-6 z-50 bg-red-600/90 hover:bg-red-500 text-white px-6 py-3 rounded-full font-black uppercase tracking-widest shadow-[0_0_20px_rgba(220,38,38,0.5)] flex items-center gap-2 backdrop-blur-md transition-all hover:scale-105 border border-white/20"
                 >
-                  <X size={20} /> Oprește Sesiunea
+                  <X size={20} /> Oprește
                 </button>
 
-                {/* Camera Canvas */}
-                <div className="flex-1 w-full h-full relative">
-                  <PoseEstimationCanvas onAccuracyChange={setAccuracyScore} />
+                {/* Cercul de Respirație */}
+                <div className="flex flex-col items-center justify-center w-full h-full relative">
+                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay pointer-events-none"></div>
                   
-                  {/* HUD Overlay */}
-                  <div className="absolute inset-0 pointer-events-none flex flex-col justify-end items-center pb-10">
-                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
-                    
-                    {/* Accuracy Bar bottom */}
-                    <div className="w-[90%] max-w-2xl bg-black/80 backdrop-blur-2xl border border-white/10 rounded-[32px] p-8 shadow-2xl relative z-10">
-                      <div className="flex justify-between items-end mb-4">
-                        <span className="text-cyan-400 text-sm font-bold uppercase tracking-widest flex items-center gap-2">
-                          <Activity size={18} /> Analiză Biomecanică
-                        </span>
-                        <span className="text-5xl font-black text-white">{accuracyScore}%</span>
-                      </div>
-                      <div className="w-full bg-white/10 rounded-full h-4 overflow-hidden shadow-inner">
-                        <motion.div
-                          animate={{ width: `${accuracyScore}%` }}
-                          transition={{ type: "spring", stiffness: 60 }}
-                          className={`h-full rounded-full ${accuracyScore > 85 ? 'bg-green-500 shadow-[0_0_15px_#22c55e]' : accuracyScore > 50 ? 'bg-yellow-500 shadow-[0_0_15px_#eab308]' : 'bg-red-500 shadow-[0_0_15px_#ef4444]'}`}
-                        />
-                      </div>
+                  <motion.div
+                    animate={{ 
+                      scale: breathConfig.phase === 'Inspiră' ? 1.6 : breathConfig.phase === 'Expiră' ? 1 : 1.6
+                    }}
+                    transition={{ 
+                      duration: breathConfig.phase === 'Menține' ? 0 : breathConfig.duration, 
+                      ease: "easeInOut" 
+                    }}
+                    className="w-48 h-48 md:w-64 md:h-64 rounded-full bg-emerald-500/10 border-[6px] border-emerald-500/40 flex items-center justify-center shadow-[0_0_60px_rgba(16,185,129,0.3)] relative z-10"
+                  >
+                    <div className="absolute inset-0 rounded-full bg-emerald-400/10 blur-xl animate-pulse" style={{ animationDuration: '3s' }}></div>
+                    <div className="flex flex-col items-center justify-center relative z-20 text-white text-center">
+                       <span className="text-2xl md:text-3xl font-black uppercase tracking-widest drop-shadow-md text-emerald-300">{breathConfig.phase}</span>
+                       <span className="text-5xl md:text-7xl font-black mt-2 font-mono drop-shadow-lg">{breathConfig.time}s</span>
                     </div>
-                  </div>
+                  </motion.div>
+                  
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-24 md:mt-32 text-gray-300 max-w-lg text-center text-sm md:text-base leading-relaxed bg-white/5 p-6 rounded-2xl border border-white/10 relative z-10 shadow-2xl"
+                  >
+                    <strong className="text-emerald-400 block mb-2 text-lg uppercase tracking-wider">Tehnica 4-7-8</strong>
+                    <span className="opacity-80">Inspiră profund pe nas timp de 4 secunde, menține respirația 7 secunde și expiră lent pe gură timp de 8 secunde. Repetă ciclul până simți că te-ai relaxat complet.</span>
+                  </motion.p>
                 </div>
               </div>
             </motion.div>
